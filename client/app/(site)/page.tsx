@@ -16,10 +16,10 @@ import { Blog } from "@/types/Blog";
 import { ThemeProvider } from "next-themes";
 import SelectedCategorySingleton from "./components/globalSelectedCategory";
 import Link from "next/link";
+import { date } from "zod";
+import { title } from "process";
 
 export default function Home() {
-
-  // NEW CODE
 
   const cardData = [
     {
@@ -36,6 +36,25 @@ export default function Home() {
       title: "Lorem Ipsum 3",
       content: "Lorem ipsum. Repellendus quidem officiis, nihil animi dicta hic accusamus ipsa, Lorem ipsum, dolor sit amet consectetur adipisicing elit. Corrupti, placeat aspernatur minus magnam unde nobis cum suscipit modi repudiandae iusto non labore autem enim quod debitis deleniti est eos nulla!",
       author: "Author 3"
+    }
+  ];
+
+  const categoriesData = [
+    {
+      type: "AI/ML, Blockchain",
+      title: "Title of the article goes here, to give an idea of what is going on.",
+      author: "Author Name",
+
+    },
+    {
+      type: "AI/ML",
+      title: "Title of the article goes here, to give an idea of what is going on.",
+      author: "Author Name",
+    },
+    {
+      type: "AI/ML, Metaverse",
+      title: "Title of the article goes here, to give an idea of what is going on.",
+      author: "Author Name",
     }
   ];
 
@@ -62,57 +81,29 @@ export default function Home() {
     )
   }
 
-  // OLD CODE
-  //get props and paths the blog and map the data to the page
-
-  // const [selectedCategoryTitle, setSelectedCategoryTitle] = useState(
-  //   SelectedCategorySingleton.getSelectedCategory()
-  // );
-  // const [blogs, setBlogs] = useState<Blog[]>([]);
-
-  // const updateSelectedCategory = (newValue: string) => {
-  //   if (selectedCategoryTitle === newValue) {
-  //     setSelectedCategoryTitle("");
-  //     SelectedCategorySingleton.setSelectedCategory("");
-  //   } else {
-  //     setSelectedCategoryTitle(newValue);
-  //     SelectedCategorySingleton.setSelectedCategory(newValue);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   const fetchBlogs = async () => {
-  //     try {
-  //       if (selectedCategoryTitle === "") {
-  //         var blogVal = await getBlogs();
-  //         setBlogs(blogVal);
-  //       } else if (selectedCategoryTitle === "AI/ML") {
-  //         var blogVal = await getFilterAIBlogs();
-  //         setBlogs(blogVal);
-  //       } else if (selectedCategoryTitle === "Blockchain") {
-  //         var blogVal = await getFilterBlockchainBlogs();
-  //         setBlogs(blogVal);
-  //       } else if (selectedCategoryTitle === "Mateverse") {
-  //         var blogVal = await getFilterBlockchainBlogs();
-  //         setBlogs(blogVal);
-  //       } else if (selectedCategoryTitle === "Market") {
-  //         var blogVal = await getFilterMarketBlogs();
-  //         setBlogs(blogVal);
-  //       } else {
-  //         var blogVal = await getFilterMetaverseBlogs();
-  //         setBlogs(blogVal);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching blogs:", error);
-  //     }
-  //   };
-
-  //   fetchBlogs();
-  // }, [selectedCategoryTitle]);
+  const Categories = ({ type, title, author }: { type: string; title: string; author: string; }) => {
+    return (
+      <div className="flex gap-6 h-full">
+        <div className="bg-gray-300 flex-col w-[20%]  h-full"></div>
+          <div className="flex justify-between flex-col w-[50%] l-[50%]">
+          <h4 className="text-2m text-normal mb-2">{type}</h4>
+          <p className="text-2xl mb-3">{title}</p>
+            <div className="flex flex-row justify-between">
+              <div className="flex flex-row items-center">
+                <div className="p-3 rounded-full bg-gray-300"></div>
+                  <p className="text-xs ml-3">{author}</p>
+                </div>
+              <div className="grid grid-cols-2 gap-x-2 items-center">
+            </div>
+          </div>
+        </div>
+       </div>
+    )
+  }
 
   return (
     <>
-      <div>
+       <div>
         <div className="mt-24 md:mt-20 my-6 md:mx-14">
           <h2 className="font-medium text-5xl text-center text-gray-800 dark:text-blue-50 md:mb-9">
             LBA - Blog
@@ -149,20 +140,47 @@ export default function Home() {
               </div>
             </div>
           </div>
-
-          {/* blog box section
-          <div className="flex w-full justify-center items-center mb-20">
-            <div className="col container max-w-full">
-              display info from each blog
-              <TrendingBlogs
-                inputBlogs={blogs}
-                postsPerPage={3}
-                selectedCategoryTitle={selectedCategoryTitle}
-              />
+            <h2 className="flex font-bold text-5xl justify-left text-gray-800 dark:text-blue-50 mb-20 mt-20">
+              Categories
+            </h2>
             </div>
-          </div> */}
+            
+            <div className="flex grid grid-rows-1 md:grid-cols-3 md:grid-rows-none gap-y-20 md:gap-x-24 p-8 md:p-0">
+              <div>
+              <div className="grid gap-y-5">
+                <div className="flex justify-left ml-10">
+                  <button className="p-3 rounded-3xl bg-purple-500 w-40 h-12 border border-white border-2 hover:bg-purple-900 ">
+                  AI/ML
+                  </button>
+                </div>
+                <div className="flex justify-left ml-10">
+                  <button className="p-3 rounded-3xl bg-purple-500 w-40 h-15 border border-white border-2 hover:bg-purple-900">
+                  Blockchain
+                  </button>
+                </div>
+                <div className="flex justify-left ml-10">
+                  <button className="p-3 rounded-3xl bg-purple-500 w-40 h-12 border border-white border-2 hover:bg-purple-900">
+                  Metaverse
+                  </button>
+                </div>
+                </div>
+              </div>
+              <div className="col-span-2">
+              <div className="grid grid-rows-3 gap-12">
+                {categoriesData.map((data, index) => (
+                  <Categories key={index} type={data.type} title={data.title} author={data.author} />
+                ))}
+              </div>
+            </div>
+            </div>
+            </div>
+          <div className="flex justify-center mt-20 mb-20">
+            <Link href="https://gemini.google.com/app/c448bf0b46f4ddac">
+              <button className="p-3 rounded-3xl bg-purple-500 w-32 h-12 border border-white border-2 hover:bg-purple-900 light:border-black">
+              Read more
+              </button>
+            </Link>
         </div>
-      </div>
     </>
   );
 }

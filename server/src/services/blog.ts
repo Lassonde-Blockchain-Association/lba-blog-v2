@@ -78,14 +78,12 @@ export function deleteBlog(): AnyProcedure {
     return publicProcedure
         .input(z.object({ id: z.string() }))
         .mutation(async (opts) => {
-            const detleteBlogProcess = await dbFunction.deleteBlog(
-                opts.input.id,
-            )
-            if (!detleteBlogProcess)
+            const deleteBlogProcess = await dbFunction.deleteBlog(opts.input.id)
+            if (!deleteBlogProcess)
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",
                     message: "Something went wrong",
                 })
-            return detleteBlogProcess
+            return deleteBlogProcess
         })
 }

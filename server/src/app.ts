@@ -10,7 +10,7 @@ app.use(cors(corsConfig))
 
 app.use("/api/trpc", createExpressMiddleware({ router: appRouter }))
 
-const port = process.env.PORT ? process.env.PORT : 3000
+const port = process.env.PORT ? process.env.PORT : 3001
 app.listen(port, () => {
     console.log(`🌠 Server listening on port ${port}`)
 })

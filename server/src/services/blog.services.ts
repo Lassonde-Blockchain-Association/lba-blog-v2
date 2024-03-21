@@ -42,6 +42,7 @@ export function getBlogsByAuthorId(): AnyProcedure {
 
 export function createBlog(): AnyProcedure {
     return publicProcedure.input(BlogSchema).mutation(async (opts) => {
+        //There must be a file handler before this
         const createBlogProcess = await dbFunction.createBlog(opts.input)
         if (!createBlogProcess)
             throw new TRPCError({

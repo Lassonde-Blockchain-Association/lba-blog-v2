@@ -1,15 +1,25 @@
 import { AnyProcedure } from "@trpc/server"
 import { authProcedue } from "../trpc"
-import z from "zod"
+
 import { signInSchema, signUpSchema } from "../schema/auth.schema"
-import * as dbFunction from "../lib/data"
+import * as authFunction from "../lib/data/auth.data"
+
+/**
+ * A signin procedure that validates data and signin user
+ * @param
+ * @returns return an object containing user data and session
+ */
 export function signIn(): AnyProcedure {
-    return authProcedue.input(signInSchema).mutation(async (opts) => {
-        return await dbFunction.signIn(opts.input)
-    })
+    try {
+        return authProcedue.input(signInSchema).mutation(async (opts) => {
+            return await authFunction.signIn(opts.input)
+        })
+    } catch (error: any) {
+        return error
+    }
 }
 export function signUp(): AnyProcedure {
     return authProcedue.input(signUpSchema).mutation(async (opts) => {
-        return await dbFunction.signUp(opts.input)
+        return await authFunction.signUp(opts.input)
     })
 }

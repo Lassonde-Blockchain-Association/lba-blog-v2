@@ -1,12 +1,12 @@
 import { publicProcedure } from "../trpc"
 import { z } from "zod"
 import { BlogSchema } from "../schema/blog.schema"
-import * as dbFunction from "../lib/data"
+import * as blogFunction from "../lib/data/blog.data"
 import { AnyProcedure, TRPCError } from "@trpc/server"
 
 export function getAllBlogs(): AnyProcedure {
     return publicProcedure.query(() => {
-        return dbFunction.getBlogs()
+        return blogFunction.getBlogs()
     })
 }
 
@@ -14,7 +14,7 @@ export function getBlogById(): AnyProcedure {
     return publicProcedure
         .input(z.object({ id: z.string() }))
         .query(({ input }) => {
-            const post = dbFunction.getBlogById(input.id)
+            const post = blogFunction.getBlogById(input.id)
             if (!post) throw new TRPCError({ code: "NOT_FOUND" })
             return post
         })
@@ -24,7 +24,7 @@ export function getBlogBySlug(): AnyProcedure {
     return publicProcedure
         .input(z.object({ slug: z.string() }))
         .query(({ input }) => {
-            const blog = dbFunction.getBlogBySlug(input.slug)
+            const blog = blogFunction.getBlogBySlug(input.slug)
             if (!blog) throw new TRPCError({ code: "NOT_FOUND" })
             return blog
         })
@@ -34,7 +34,7 @@ export function getBlogsByAuthorId(): AnyProcedure {
     return publicProcedure
         .input(z.object({ id: z.string() }))
         .query(async (opts) => {
-            const blogs = dbFunction.getBlogsByAuthorId(opts.input.id)
+            const blogs = blogFunction.getBlogsByAuthorId(opts.input.id)
             if (!blogs) throw new TRPCError({ code: "NOT_FOUND" })
             return blogs
         })
@@ -43,7 +43,7 @@ export function getBlogsByAuthorId(): AnyProcedure {
 export function createBlog(): AnyProcedure {
     return publicProcedure.input(BlogSchema).mutation(async (opts) => {
         //There must be a file handler before this
-        const createBlogProcess = await dbFunction.createBlog(opts.input)
+        const createBlogProcess = await blogFunction.createBlog(opts.input)
         if (!createBlogProcess)
             throw new TRPCError({
                 code: "INTERNAL_SERVER_ERROR",
@@ -62,7 +62,7 @@ export function updateBlog(): AnyProcedure {
             }),
         )
         .mutation(async (opts) => {
-            const updateBlogProcess = await dbFunction.updateBlog(
+            const updateBlogProcess = await blogFunction.updateBlog(
                 opts.input.id,
                 opts.input.BlogSchema,
             )
@@ -79,7 +79,9 @@ export function deleteBlog(): AnyProcedure {
     return publicProcedure
         .input(z.object({ id: z.string() }))
         .mutation(async (opts) => {
-            const deleteBlogProcess = await dbFunction.deleteBlog(opts.input.id)
+            const deleteBlogProcess = await blogFunction.deleteBlog(
+                opts.input.id,
+            )
             if (!deleteBlogProcess)
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",

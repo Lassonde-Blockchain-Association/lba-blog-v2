@@ -11,14 +11,10 @@ export const signUpSchema = z.object({
     password: z
         .string()
         .min(8, "Length must be between 8 and 16 characters")
-        .max(16, "Length must be between 8 and 16 characters")
         .regex(passwordRegex, { message: "Your password is not valid" }),
 })
 
 export const signInSchema = z.object({
     email: z.string().email({ message: "Please enter a valid email address" }),
-    password: z
-        .string()
-        .min(8, "Length must be between 8 and 16 characters")
-        .max(16, "Length must be between 8 and 16 characters"),
+    password: z.string().min(8, "Length must be between 8 and 16 characters"),
 })

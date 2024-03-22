@@ -1,8 +1,6 @@
-import { db } from "./db"
-import { BlogSchema } from "../schema/blog.schema"
+import { db } from "../db"
+import { BlogSchema } from "../../schema/blog.schema"
 import { z } from "zod"
-import { signInSchema, signUpSchema } from "../schema/auth.schema"
-import { supabase } from "./supabase"
 
 //Get all available blogs in the database
 export async function getBlogs() {
@@ -147,57 +145,4 @@ export async function deleteBlog(id: string) {
             return { error: "Something went wrong" }
         })
     return { success: "Blog Delete successfully" }
-}
-
-export async function signIn(values: z.infer<typeof signInSchema>) {
-    const validatedFields = signInSchema.safeParse(values)
-    if (!validatedFields.success) {
-        return {
-            error: "Something went wrong",
-        }
-    }
-    const { email, password } = validatedFields.data
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-    })
-
-    if (error) {
-        return {
-            data,
-            error: error,
-        }
-    }
-    return data
-}
-
-export async function signUp(values: z.infer<typeof signUpSchema>) {
-    const validatedFields = signUpSchema.safeParse(values)
-    if (!validatedFields.success) {
-        return {
-            error: "Something went wrong",
-        }
-    }
-
-    const { firstName, lastName, email, password } = validatedFields.data
-    const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-    })
-    if (error) {
-        return {
-            error: "Invalid email",
-        }
-    }
-    await db.author.create({
-        data: {
-            firstName,
-            lastName,
-            email,
-            password,
-        },
-    })
-    return {
-        success: "Created Successfully",
-    }
 }

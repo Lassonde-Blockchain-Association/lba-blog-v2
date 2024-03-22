@@ -6,45 +6,63 @@ import { supabase } from "./supabase"
 
 //Get all available blogs in the database
 export async function getBlogs() {
-    return db.blog.findMany()
+    const { data, error } = await supabase
+        .from('blog')
+        .select('*');
+    if (error) {
+        throw error;
+    }
+    return data;
 }
 
 //Get blog by id
-export async function getBlogById(id: string) {
-    return db.blog.findUnique({
-        where: {
-            id,
-        },
-    })
-}
 
+export async function getBlogById(id) {
+    const { data, error } = await supabase
+        .from('blog')
+        .select('*')
+        .eq('id', id)
+        .single();
+    if (error) {
+        throw error;
+    }
+    return data;
+}
 //Get all blogs by Author with given id
 export async function getBlogsByAuthorId(authorId: string) {
-    return db.blog.findMany({
-        where: {
-            authorId,
-        },
-    })
+    const { data, error } = await supabase
+        .from('blog')
+        .select('*')
+        .eq('authorId', authorId);
+    if (error) {
+        throw error;
+    }
+    return data;
 }
-
 //Get Blog by Slug
 export async function getBlogBySlug(slug: string) {
-    return db.blog.findUnique({
-        where: {
-            slug,
-        },
-    })
+    const { data, error } = await supabase
+        .from('blog')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+    if (error) {
+        throw error;
+    }
+    return data;
 }
 //Get Blogs by Category
 //Problem : how to deal with category ENUM in DB
 export async function getBlogsByCategory(category: any) {
-    return db.blog.findMany({
-        where: {
-            category: category,
-        },
-    })
+    const { data, error } = await supabase
+        .from('blog')
+        .select('*')
+        .eq('category', category);
+    if (error) {
+        throw error;
+    }
+    return data;
 }
-
 //Create Blog
 export async function createBlog(data: z.infer<typeof BlogSchema>) {
     const validatedBlog = BlogSchema.safeParse(data)

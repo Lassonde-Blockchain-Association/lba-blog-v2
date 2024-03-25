@@ -67,17 +67,19 @@ function MyForm() {
     }
   };
 
-  const handleCategoryInputChange = (event: any) => {
-    const { name, value } = event.target;
+  const handleCategoryInputChange = (value: string) => {
+    const name = "category";
 
-    var categoriesCopy = categories;
-    if (categories.includes(value)) {
+    var categoriesCopy = formData.category;
+    if (formData.category.includes(value)) {
       var index = categoriesCopy.indexOf(value);
       categoriesCopy.splice(index, 1);
     } else {
       categoriesCopy.push(value);
     }
     setFormData({ ...formData, [name]: categoriesCopy });
+    console.log(categoriesCopy);
+    console.log(formData.category);
   };
 
   const categories = ["Blockchain", "AI", "Metaverse", "Market", "Programming"];

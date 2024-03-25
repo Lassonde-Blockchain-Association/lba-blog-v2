@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
+import CategorySelector from "./CategorySelector";
 
 interface DateCategorySectionProps {
   formData: {
@@ -29,7 +30,7 @@ const DateCategorySection = ({
   SetCategoryError,
 }: DateCategorySectionProps) => {
   return (
-    <div className="flex flex-row justify-between space-x-56">
+    <div className="flex flex-row justify-between space-x-56 h-[3.5rem]">
       <div className="mt-4 flex-grow">
         <input
           type="text"
@@ -50,7 +51,13 @@ const DateCategorySection = ({
       </div>
 
       {/* Category */}
-      <div className="mt-4 flex-grow">
+      <div className="mt-4 flex-grow rounded-xl z-50">
+        <CategorySelector
+          formDataCategories={formData.category}
+          handleCategoryInputChange={handleCategoryInputChange}
+          categories={categories}
+        />
+        {/*
         <select
           id="category"
           name="category"
@@ -69,6 +76,7 @@ const DateCategorySection = ({
             </option>
           ))}
         </select>
+          */}
         {categoryError && (
           <div className="text-red-600">Invalid Input for Category</div>
         )}

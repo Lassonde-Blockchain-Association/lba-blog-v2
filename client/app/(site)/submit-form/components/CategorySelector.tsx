@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
+import { TiArrowSortedDown } from "react-icons/ti";
 
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 
@@ -22,11 +23,7 @@ const CategorySelector = ({
   handleCategoryInputChange,
   categories,
 }: CategorySelectorProps) => {
-  // const [showCategoryList, setShowCategoryList] = useState(false);
   const [checkedList, setCheckedList] = useState<Checked[]>([]);
-  // const handleCategoryButton = () => {
-  //   setShowCategoryList(!showCategoryList);
-  // };
 
   useEffect(() => {
     const initialCheckList: boolean[] = Array<boolean>(categories.length).fill(
@@ -49,18 +46,25 @@ const CategorySelector = ({
     <div className="w-full z-50">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <div className="border rounded-xl pl-[7px] py-2 overflow-y-auto bg-slate-200 dark:bg-slate-800 dark:border-0 dark:border-opacity-100 border-opacity-50 border-black">
-            Categories
+          <div className="border rounded-xl pl-[10px] pr-2 py-2 overflow-y-auto bg-slate-200 dark:bg-slate-800 dark:border-0 dark:border-opacity-100 border-opacity-50 border-black flex justify-between items-center">
+            <p>
+              {formDataCategories.length == 0
+                ? "Select Categories"
+                : formDataCategories.toString()}
+            </p>
+            <TiArrowSortedDown />
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-40">
           <DropdownMenuLabel>Categories</DropdownMenuLabel>
           <DropdownMenuSeparator />
           {categories.map((category, index) => (
-            <DropdownMenuCheckboxItem checked={checkedList[index]} key={index}>
-              <div onClick={(event) => handleClickedCategory(index, category)}>
-                {category}
-              </div>
+            <DropdownMenuCheckboxItem
+              checked={checkedList[index]}
+              key={index}
+              onClick={() => handleClickedCategory(index, category)}
+            >
+              {category}
             </DropdownMenuCheckboxItem>
           ))}
         </DropdownMenuContent>

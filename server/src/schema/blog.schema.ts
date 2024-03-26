@@ -5,15 +5,7 @@ export const BlogSchema = z.object({
         .string()
         .min(3, { message: "Title must be 3 characters long" })
         .max(120, { message: "Title must be 120 characters or less" }),
-    category: z.enum([
-        "AI",
-        "BLOCKCHAIN",
-        "CLOUD",
-        "DEVOPS",
-        "METAVERSE",
-        "NFT",
-        "WEB3",
-    ]),
+    categories: z.array(z.string().min(1)).min(1),
     description: z
         .string()
         .min(3, { message: "Description must be more than 3 characters" })

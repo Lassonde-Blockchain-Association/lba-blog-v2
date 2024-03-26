@@ -15,7 +15,11 @@ export function getBlogById(): AnyProcedure {
         .input(z.object({ id: z.string() }))
         .query(({ input }) => {
             const post = blogFunction.getBlogById(input.id)
-            if (!post) throw new TRPCError({ code: "NOT_FOUND" })
+            if (!post)
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "No Blog with this Id",
+                })
             return post
         })
 }
@@ -25,7 +29,11 @@ export function getBlogBySlug(): AnyProcedure {
         .input(z.object({ slug: z.string() }))
         .query(({ input }) => {
             const blog = blogFunction.getBlogBySlug(input.slug)
-            if (!blog) throw new TRPCError({ code: "NOT_FOUND" })
+            if (!blog)
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "No blog with this slug",
+                })
             return blog
         })
 }
@@ -35,7 +43,8 @@ export function getBlogsByAuthorId(): AnyProcedure {
         .input(z.object({ id: z.string() }))
         .query(async (opts) => {
             const blogs = blogFunction.getBlogsByAuthorId(opts.input.id)
-            if (!blogs) throw new TRPCError({ code: "NOT_FOUND" })
+            if ((await blogs).length == 0)
+                throw new TRPCError({ code: "NOT_FOUND" })
             return blogs
         })
 }

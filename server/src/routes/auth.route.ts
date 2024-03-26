@@ -5,4 +5,5 @@ import * as authService from "../services/auth.services"
 export const authRouter: AnyRouter = router({
     signin: authService.signIn(),
     signup: authService.signUp(),
+    signOut: authService.signOut(),
 })

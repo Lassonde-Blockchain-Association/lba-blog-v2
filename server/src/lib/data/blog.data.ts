@@ -33,12 +33,12 @@ export async function getBlogBySlug(slug: string) {
         },
     })
 }
-//Get Blogs by Category
-//Problem : how to deal with category ENUM in DB
-export async function getBlogsByCategory(category: any) {
+//Get Blogs by categories
+//Problem : how to deal with categories ENUM in DB
+export async function getBlogsBycategories(categories: any) {
     return db.blog.findMany({
         where: {
-            category: category,
+            categories: categories,
         },
     })
 }
@@ -50,10 +50,10 @@ export async function createBlog(data: z.infer<typeof BlogSchema>) {
 
     //Change this to current user id by session
     const currentUser = {
-        id: "7d7b47a3-e8b4-40e5-ab95-9a5fddc369c6",
+        id: "f93bd770-d6dd-4865-a865-e413ad2f1932",
     }
 
-    const { title, category, description, content, imageUrl, slug } =
+    const { title, categories, description, content, imageUrl, slug } =
         validatedBlog.data
 
     const existingBlogbySlug = await getBlogBySlug(slug)
@@ -62,29 +62,24 @@ export async function createBlog(data: z.infer<typeof BlogSchema>) {
             error: "Existing Slug",
         }
 
-    await db.blog
-        .create({
-            data: {
-                title,
-                category,
-                description,
-                content,
-                imageUrl,
-                slug,
-                author: {
-                    connect: {
-                        id: currentUser.id,
-                    },
+    await db.blog.create({
+        data: {
+            title,
+            categories,
+            description,
+            content,
+            imageUrl,
+            slug,
+            author: {
+                connect: {
+                    id: currentUser.id,
                 },
             },
-            select: {
-                id: true,
-            },
-        })
-        .catch((error) => {
-            console.log("CREATE BLOG ERROR")
-            return { error: "Something went wrong" }
-        })
+        },
+        select: {
+            id: true,
+        },
+    })
 
     return { success: "Blog created successfully" }
 }
@@ -99,7 +94,7 @@ export async function updateBlog(id: string, data: z.infer<typeof BlogSchema>) {
         id: "7d7b47a3-e8b4-40e5-ab95-9a5fddc369c6",
     }
 
-    const { title, category, slug, description, content, imageUrl } =
+    const { title, categories, slug, description, content, imageUrl } =
         validatedBlog.data
 
     const exisitingBlog = await getBlogById(id)
@@ -112,7 +107,7 @@ export async function updateBlog(id: string, data: z.infer<typeof BlogSchema>) {
             },
             data: {
                 title,
-                category,
+                categories,
                 description,
                 content,
                 imageUrl,

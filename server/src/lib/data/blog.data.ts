@@ -1,6 +1,8 @@
 import { db } from "../db"
 import { BlogSchema } from "../../schema/blog.schema"
 import { z } from "zod"
+import { uploadFile } from "../handler/file.handler"
+import slugify from 'slugify'
 
 //Get all available blogs in the database
 export async function getBlogs() {
@@ -46,21 +48,24 @@ export async function getBlogsBycategories(categories: any) {
 //Create Blog
 export async function createBlog(data: z.infer<typeof BlogSchema>) {
     const validatedBlog = BlogSchema.safeParse(data)
-    if (!validatedBlog.success) throw new Error("Invalid blog data")
+    if (!validatedBlog.success) return {error:"Invalid blog data", code:400}
 
     //Change this to current user id by session
     const currentUser = {
         id: "f93bd770-d6dd-4865-a865-e413ad2f1932",
     }
 
-    const { title, categories, description, content, imageUrl, slug } =
+    const { title, categories, description, content, image, slug } =
         validatedBlog.data
+    const imageUrl = await uploadFile(image);
 
     const existingBlogbySlug = await getBlogBySlug(slug)
     if (existingBlogbySlug)
         return {
             error: "Existing Slug",
         }
+
+    const modifiedSlug = slugify(title) ;
 
     await db.blog.create({
         data: {
@@ -69,7 +74,7 @@ export async function createBlog(data: z.infer<typeof BlogSchema>) {
             description,
             content,
             imageUrl,
-            slug,
+            slug:modifiedSlug,
             author: {
                 connect: {
                     id: currentUser.id,
@@ -94,9 +99,9 @@ export async function updateBlog(id: string, data: z.infer<typeof BlogSchema>) {
         id: "7d7b47a3-e8b4-40e5-ab95-9a5fddc369c6",
     }
 
-    const { title, categories, slug, description, content, imageUrl } =
+    const { title, categories, slug, description, content, image } =
         validatedBlog.data
-
+    const imageUrl = ""
     const exisitingBlog = await getBlogById(id)
     if (!exisitingBlog) return { error: "No blog with this Id" }
 

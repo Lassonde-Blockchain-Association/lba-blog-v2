@@ -1,5 +1,5 @@
 import { AnyProcedure, TRPCError } from "@trpc/server"
-import { authProcedue } from "../trpc"
+import { authProcedure, publicProcedure } from "../trpc"
 
 import { signInSchema, signUpSchema } from "../schema/auth.schema"
 import * as authFunction from "../lib/data/auth.data"
@@ -10,7 +10,7 @@ import * as authFunction from "../lib/data/auth.data"
  * @returns return an object containing user data and session
  */
 export function signIn(): AnyProcedure {
-    return authProcedue.input(signInSchema).mutation(async (opts) => {
+    return publicProcedure.input(signInSchema).mutation(async (opts) => {
         const authResult = await authFunction.signIn(opts.input)
         if (authResult.error) {
             throw new TRPCError({
@@ -22,12 +22,12 @@ export function signIn(): AnyProcedure {
     })
 }
 export function signUp(): AnyProcedure {
-    return authProcedue.input(signUpSchema).mutation(async (opts) => {
+    return publicProcedure.input(signUpSchema).mutation(async (opts) => {
         return await authFunction.signUp(opts.input)
     })
 }
 export function signOut() {
-    return authProcedue.mutation(async () => {
+    return authProcedure.mutation(async () => {
         return await authFunction.signOut()
     })
 }

@@ -1,4 +1,4 @@
-import { publicProcedure } from "../trpc"
+import { authProcedure, publicProcedure } from "../trpc"
 import { z } from "zod"
 import { BlogSchema } from "../schema/blog.schema"
 import * as blogFunction from "../lib/data/blog.data"
@@ -50,7 +50,7 @@ export function getBlogsByAuthorId(): AnyProcedure {
 }
 
 export function createBlog(): AnyProcedure {
-    return publicProcedure.input(BlogSchema).mutation(async (opts) => {
+    return authProcedure.input(BlogSchema).mutation(async (opts) => {
         //There must be a file handler before this
         const createBlogProcess = await blogFunction.createBlog(opts.input)
         if (!createBlogProcess)
@@ -63,7 +63,7 @@ export function createBlog(): AnyProcedure {
 }
 
 export function updateBlog(): AnyProcedure {
-    return publicProcedure
+    return authProcedure
         .input(
             z.object({
                 id: z.string(),
@@ -85,7 +85,7 @@ export function updateBlog(): AnyProcedure {
 }
 
 export function deleteBlog(): AnyProcedure {
-    return publicProcedure
+    return authProcedure
         .input(z.object({ id: z.string() }))
         .mutation(async (opts) => {
             const deleteBlogProcess = await blogFunction.deleteBlog(

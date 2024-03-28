@@ -2,10 +2,10 @@ import { db } from "../db"
 import { BlogSchema } from "../../schema/blog.schema"
 import { z } from "zod"
 import { uploadFile } from "../handler/file.handler"
-import slugify from 'slugify'
+import slugify from "slugify"
+import { getCurrentUser } from "./session.data"
 
-
-const DUMMY_USER_ID = "ebddb50d-cce9-4366-9707-1f61ed23abf3";
+const DUMMY_USER_ID = "ebddb50d-cce9-4366-9707-1f61ed23abf3"
 
 //Get all available blogs in the database
 export async function getBlogs() {
@@ -51,16 +51,20 @@ export async function getBlogsBycategories(categories: any) {
 //Create Blog
 export async function createBlog(data: z.infer<typeof BlogSchema>) {
     const validatedBlog = BlogSchema.safeParse(data)
-    if (!validatedBlog.success) return {error:"Invalid blog data", code:400}
+    if (!validatedBlog.success) return { error: "Invalid blog data", code: 400 }
 
     //Change this to current user id by session
-    const currentUser = {
-        id: DUMMY_USER_ID,
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+        return {
+            error: "Login to create post",
+            code: "UNAUTHORIZED",
+        }
     }
 
     const { title, categories, description, content, image, slug } =
         validatedBlog.data
-    const imageUrl = await uploadFile(image);
+    const imageUrl = await uploadFile(image)
 
     const existingBlogbySlug = await getBlogBySlug(slug)
     if (existingBlogbySlug)
@@ -68,7 +72,7 @@ export async function createBlog(data: z.infer<typeof BlogSchema>) {
             error: "Existing Slug",
         }
 
-    const modifiedSlug = slugify(title) ;
+    const modifiedSlug = slugify(title)
 
     await db.blog.create({
         data: {
@@ -77,7 +81,7 @@ export async function createBlog(data: z.infer<typeof BlogSchema>) {
             description,
             content,
             imageUrl,
-            slug:modifiedSlug,
+            slug: modifiedSlug,
             author: {
                 connect: {
                     id: currentUser.id,
@@ -98,8 +102,12 @@ export async function updateBlog(id: string, data: z.infer<typeof BlogSchema>) {
     if (!validatedBlog.success) throw new Error("Invalid blog data")
 
     //Change this to current user id by session
-    const currentUser = {
-        id: DUMMY_USER_ID,
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+        return {
+            error: "Login to create post",
+            code: "UNAUTHORIZED",
+        }
     }
 
     const { title, categories, slug, description, content, image } =
@@ -137,6 +145,14 @@ export async function updateBlog(id: string, data: z.infer<typeof BlogSchema>) {
 export async function deleteBlog(id: string) {
     const exisitingBlog = await getBlogById(id)
     if (!exisitingBlog) return { error: "No blog with this Id" }
+
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+        return {
+            error: "Login to create post",
+            code: "UNAUTHORIZED",
+        }
+    }
     await db.blog
         .delete({
             where: {

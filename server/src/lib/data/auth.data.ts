@@ -3,6 +3,7 @@ import { supabase } from "../supabase"
 import z from "zod"
 import { createUser, getUserByEmail, getUserPasswordByEmail } from "./user.data"
 import bcrypt from "bcrypt"
+import { getCurrentUser } from "./session.data"
 
 function comparePassword(password: string, userPassword: string) {
     return bcrypt.compareSync(password, userPassword)
@@ -43,7 +44,6 @@ export async function signIn(values: z.infer<typeof signInSchema>) {
 
     //Get session info only
     const { user, ...session } = data.session
-
     return {
         user: existingUser,
         session,
@@ -78,7 +78,10 @@ export async function signUp(values: z.infer<typeof signUpSchema>) {
         }
     }
 
-    const createUserResult = await createUser(validatedFields.data)
+    const createUserResult = await createUser({
+        id: data.user?.id as string,
+        ...validatedFields.data,
+    })
     if (!createUserResult) {
         console.log("SIGNUP ERROR\n")
         return {

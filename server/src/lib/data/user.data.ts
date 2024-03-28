@@ -31,6 +31,7 @@ export async function getUserByEmail(email: string) {
 const SALT = bcrypt.genSaltSync(10)
 
 interface createUserProps {
+    id: string
     firstName: string
     lastName: string
     email: string
@@ -40,6 +41,7 @@ function hashPassword(password: string) {
     return bcrypt.hashSync(password, SALT)
 }
 export async function createUser({
+    id,
     firstName,
     lastName,
     email,
@@ -47,6 +49,7 @@ export async function createUser({
 }: createUserProps) {
     return await db.author.create({
         data: {
+            id,
             firstName,
             lastName,
             email,

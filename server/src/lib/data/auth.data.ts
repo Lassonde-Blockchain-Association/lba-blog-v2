@@ -90,7 +90,7 @@ export async function signUp(values: z.infer<typeof signUpSchema>) {
     }
     return {
         success: "Created Successfully",
-        data: data.user,
+        data: data,
     }
 }
 

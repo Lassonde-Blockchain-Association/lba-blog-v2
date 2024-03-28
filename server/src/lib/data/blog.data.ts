@@ -4,6 +4,9 @@ import { z } from "zod"
 import { uploadFile } from "../handler/file.handler"
 import slugify from 'slugify'
 
+
+const DUMMY_USER_ID = "ebddb50d-cce9-4366-9707-1f61ed23abf3";
+
 //Get all available blogs in the database
 export async function getBlogs() {
     return db.blog.findMany()
@@ -52,7 +55,7 @@ export async function createBlog(data: z.infer<typeof BlogSchema>) {
 
     //Change this to current user id by session
     const currentUser = {
-        id: "f93bd770-d6dd-4865-a865-e413ad2f1932",
+        id: DUMMY_USER_ID,
     }
 
     const { title, categories, description, content, image, slug } =
@@ -96,7 +99,7 @@ export async function updateBlog(id: string, data: z.infer<typeof BlogSchema>) {
 
     //Change this to current user id by session
     const currentUser = {
-        id: "7d7b47a3-e8b4-40e5-ab95-9a5fddc369c6",
+        id: DUMMY_USER_ID,
     }
 
     const { title, categories, slug, description, content, image } =

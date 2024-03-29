@@ -7,7 +7,11 @@ interface PaginationProps {
   onChangePage: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ currentPage,  numTotalPages, onChangePage }) => {
+const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
+  numTotalPages,
+  onChangePage,
+}) => {
   var hasPrev = currentPage > 1;
   var hasNext = currentPage < numTotalPages;
 
@@ -17,7 +21,10 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage,  numTotalPages, on
         &lt;&lt;
       </button> */}
 
-      <button onClick={() => hasPrev && onChangePage(currentPage - 1)} className={hasPrev ? "active" : "inactive text-transparent"}>
+      <button
+        onClick={() => hasPrev && onChangePage(currentPage - 1)}
+        className={hasPrev ? "active" : "inactive text-transparent"}
+      >
         &lt;
       </button>
 
@@ -27,13 +34,20 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage,  numTotalPages, on
           buttonClasses = "active text-blue-300";
         }
         return (
-          <button key={page} onClick={() => onChangePage(page)} className={buttonClasses}>
+          <button
+            key={page}
+            onClick={() => onChangePage(page)}
+            className={buttonClasses}
+          >
             {page}
           </button>
         );
       })}
 
-      <button onClick={() => hasNext && onChangePage(currentPage + 1)} className={hasNext ? "active" : "inactive text-transparent"}>
+      <button
+        onClick={() => hasNext && onChangePage(currentPage + 1)}
+        className={hasNext ? "active" : "inactive text-transparent"}
+      >
         &gt;
       </button>
 

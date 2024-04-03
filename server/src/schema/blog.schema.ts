@@ -14,13 +14,12 @@ export const BlogSchema = z.object({
         .min(3, { message: "Description must be more than 3 characters" })
         .max(512, { message: "Description must be 512 characters or less" }),
     content: z.string(),
-    image: z
-        .instanceof(File)
-        .refine((file) => {
-            return !file || file.size <= MAX_UPLOAD_SIZE
-        }, "File size must be less than 10MB")
-        .refine((file) => {
-            return ACCEPTED_FILE_TYPES.includes(file.type)
-        }, "File must be a PNG"),
+    image: z.any(),
+    // .refine((file) => {
+    //     return file?.[0]?.size <= MAX_UPLOAD_SIZE
+    // }, "File size must be less than 10MB")
+    // .refine((file) => {
+    //     return ACCEPTED_FILE_TYPES.includes(file?.[0]?.type)
+    // }, "File must be a PNG"),
     slug: z.string(),
 })

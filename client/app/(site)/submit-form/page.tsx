@@ -14,6 +14,8 @@ import processSubmitBlog from "./components/ProcessSubmitBlog";
 import FileDragDrop from "./components/FileDragDrop";
 import DateCategorySection from "./components/DateCategorySection";
 
+import { trpcClient } from "../(lib)/trpc";
+
 function MyForm() {
   const [file, setFile] = useState<File>();
   const [imageSrc, setImageSrc] = useState("");
@@ -119,6 +121,17 @@ function MyForm() {
   };
 
   const [fileReader, setFileReader] = useState<FileReader>();
+
+  useEffect(() => {
+    const login = async () => {
+      const result = await trpcClient.auth.signIn.mutate({
+        email: "theo.thanhlam@gmail.com",
+        password: "@Testpassword1234",
+      });
+      console.log(result);
+    };
+    login();
+  }, []);
 
   useEffect(() => {
     // Instantiate the FileReader on the client side after DOM is hydrated

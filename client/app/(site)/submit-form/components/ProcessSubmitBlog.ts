@@ -1,6 +1,8 @@
 import { Editor } from "@tiptap/react";
 import { Dispatch, SetStateAction } from "react";
 import z from "zod";
+import { trpcClient } from "../../(lib)/trpc";
+import { BlogSchema as blogSchemaBackend } from "../../../../../server/src/schema/blog.schema";
 
 interface processSubmitBlogProps {
   event: { preventDefault: () => void };
@@ -107,24 +109,20 @@ async function processSubmitBlog({
     return;
   }
 
-  //   try {
-  //     const response = await fetch("http://localhost:5000", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(submittedBlog),
-  //     });
-  //     if (!response.ok) {
-  //       throw new Error("Server responded with an error");
-  //     }
-  //     console.log("Blog submitted successfully:", await response.json());
-  //     setShouldMsgShow(true);
-  //   } catch (error) {
-  //     console.log("Error trying to submit blog: ", error);
-  //     alert("Server error with posting blog");
-  //     return;
-  //   }
+  console.log(file);
+
+  console.log(file == undefined);
+
+  console.log(file instanceof File);
+  const result = await trpcClient.blog.createBlog.mutate({
+    title: formData.title,
+    categories: formData.category,
+    description: formData.description,
+    content: editor?.getHTML().toString(),
+    image: file! as File,
+    slug: formData.slug,
+  });
+  console.log(result);
 
   console.log("Title:", formData.title);
   console.log("Slug:", formData.slug);

@@ -62,9 +62,8 @@ export async function createBlog(data: z.infer<typeof BlogSchema>) {
         }
     }
 
-    const { title, categories, description, content, image, slug } =
+    const { title, categories, description, content, imageUrl, slug } =
         validatedBlog.data
-    const imageUrl = await uploadFile(image)
 
     const existingBlogbySlug = await getBlogBySlug(slug)
     if (existingBlogbySlug)
@@ -110,9 +109,8 @@ export async function updateBlog(id: string, data: z.infer<typeof BlogSchema>) {
         }
     }
 
-    const { title, categories, slug, description, content, image } =
+    const { title, categories, slug, description, content, imageUrl } =
         validatedBlog.data
-    const imageUrl = ""
     const exisitingBlog = await getBlogById(id)
     if (!exisitingBlog) return { error: "No blog with this Id" }
 

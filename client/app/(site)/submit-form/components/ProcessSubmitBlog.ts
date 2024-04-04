@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction } from "react";
 import z from "zod";
 import { trpcClient } from "../../(lib)/trpc";
 import { BlogSchema as blogSchemaBackend } from "../../../../../server/src/schema/blog.schema";
+import { createBlog } from "../../../../../server/src/services/blog.services";
 
 interface processSubmitBlogProps {
   event: { preventDefault: () => void };
@@ -114,15 +115,31 @@ async function processSubmitBlog({
   console.log(file == undefined);
 
   console.log(file instanceof File);
-  const result = await trpcClient.blog.createBlog.mutate({
-    title: formData.title,
-    categories: formData.category,
-    description: formData.description,
-    content: editor?.getHTML().toString(),
-    image: file! as File,
-    slug: formData.slug,
-  });
-  console.log(result);
+
+  console.log(file);
+
+  const form = new FormData();
+  form.append("file", file as File);
+  const responsefromAPI = await fetch(
+    `${process.env.NEXT_PUBLIC_DB_URL}/api/upload`,
+    {
+      method: "POST",
+      body: form,
+    }
+  );
+  if (responsefromAPI.ok) {
+    const responseData = await responsefromAPI.json();
+    const imageUrl = responseData.imageUrl;
+    const result = await trpcClient.blog.createBlog.mutate({
+      title: formData.title,
+      categories: formData.category,
+      description: formData.description,
+      content: editor?.getHTML().toString(),
+      imageUrl,
+      slug: formData.slug,
+    });
+    console.log(result);
+  }
 
   console.log("Title:", formData.title);
   console.log("Slug:", formData.slug);

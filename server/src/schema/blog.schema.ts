@@ -8,13 +8,13 @@ export const BlogSchema = z.object({
         .string()
         .min(3, { message: "Title must be 3 characters long" })
         .max(120, { message: "Title must be 120 characters or less" }),
-    categories: z.array(z.string().min(1)).min(1),
+    categories: z.array(z.string().min(1)).min(1).optional(),
     description: z
         .string()
         .min(3, { message: "Description must be more than 3 characters" })
         .max(512, { message: "Description must be 512 characters or less" }),
     content: z.string(),
-    image: z.any(),
+    imageUrl: z.string(),
     // .refine((file) => {
     //     return file?.[0]?.size <= MAX_UPLOAD_SIZE
     // }, "File size must be less than 10MB")

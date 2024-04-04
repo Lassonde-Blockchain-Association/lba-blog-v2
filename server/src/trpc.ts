@@ -11,7 +11,7 @@ export const authProcedure = t.procedure.use(function isAuthed(opts) {
             code: "UNAUTHORIZED",
         })
     }
-    console.log(opts.ctx.session)
+
     return opts.next({
         ctx: {
             session: opts.ctx.session,

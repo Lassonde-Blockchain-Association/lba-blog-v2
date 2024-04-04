@@ -51,9 +51,7 @@ export function getBlogsByAuthorId(): AnyProcedure {
 
 export function createBlog(): AnyProcedure {
     return authProcedure.input(BlogSchema).mutation(async (opts) => {
-        //There must be a file handler before this
         const createBlogProcess = await blogFunction.createBlog(opts.input)
-        console.log(createBlogProcess)
         if (!createBlogProcess)
             throw new TRPCError({
                 code: "INTERNAL_SERVER_ERROR",

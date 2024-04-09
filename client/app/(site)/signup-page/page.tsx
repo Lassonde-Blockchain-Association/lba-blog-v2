@@ -5,36 +5,57 @@ import Image from "next/image";
 import Link from "next/link";
 import Logo from "../../../public/logo.png";
 import image from "../../../public/image.jpg";
+import { trpcClient } from "../(lib)/trpc";
 
 const Signup: React.FC = () => {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [confirmPassword, setConfirmPassword] = useState("");
+  // const [passwordError, setPasswordError] = useState("");
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-    validatePasswordMatch(e.target.value, confirmPassword);
-  };
+  // const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setPassword(e.target.value);
+  //   validatePasswordMatch(e.target.value, confirmPassword);
+  // };
 
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setConfirmPassword(e.target.value);
-    validatePasswordMatch(password, e.target.value);
-  };
+  // const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setConfirmPassword(e.target.value);
+  //   validatePasswordMatch(password, e.target.value);
+  // };
 
-  const validatePasswordMatch = (password: string, confirmPassword: string) => {
-    if (password !== confirmPassword) {
-      setPasswordError("Passwords do not match!!");
-    } else {
-      setPasswordError("");
-    }
-  };
+  // const validatePasswordMatch = (password: string, confirmPassword: string) => {
+  //   if (password !== confirmPassword) {
+  //     setPasswordError("Passwords do not match!!");
+  //   } else {
+  //     setPasswordError("");
+  //   }
+  // };
 
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [firstName, setName] = useState<string>('');
+  const [lastName, setConfirmPassword] = useState<string>('');
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const result = await trpcClient.auth.signUp.mutate({
+      firstName: firstName,
+      email: email,
+      password: password,
+      lastName: lastName,
+    });
+
+    console.log(result)
+    console.log([['Name:', firstName], ['Email:', email], ['Password:', password], ['Confirm Password:', lastName]]);
+  };  
+
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 md:h-screen bg-gray-50 dark:bg-[#020817]">
+    <div className="grid grid-cols-1 md:grid-cols-2 h-fit bg-gray-50 dark:bg-[#020817]">
 
       {/* Image Background column */}
 
-      <div className="hidden md:flex items-center justify-center h-screen">
+      <div className="hidden md:flex items-center justify-center h-full">
         <div className="w-full h-full relative">
           <Image src={image} alt="Background" layout="fill" objectFit="cover" className="absolute inset-0"/>
         </div>
@@ -42,9 +63,9 @@ const Signup: React.FC = () => {
 
       {/* Signup Page Column */}
 
-      <div className="flex items-center justify-center pt-16 h-screen">
-        <div className="w-full md:w-[75%]">
-          <div className="p-12 md:p-8 w-full h-fit">
+      <div className="flex items-center justify-center pt-16 pb-12 h-fit">
+        <div className="w-full md:w-[85%]">
+          <div className="p-10 md:p-8 w-full h-fit">
 
             {/* <Link href="https://lassondeblockchain.vercel.app/">
               <Image alt="logo" src={Logo} className="cursor-pointer h-[50px] w-[50px] mb-3"/>
@@ -54,36 +75,42 @@ const Signup: React.FC = () => {
             
             <p className="text-gray-500 dark:text-gray-300 text-base font-thin">Begin your journey here. Sign in and start crafting your digital narrative today.</p>
             
-            <form action="" className="mt-6">
+            <form action="" className="mt-6" onSubmit={handleSubmit}>
               {/* Name, Email and Password Boxes Div */}
-              <div className="grid grid-cols-2 grid-rows-2 gap-x-6 gap-y-5">
+              <div className="grid grid-rows-4 lg:grid-cols-2 lg:grid-rows-2 gap-x-6 gap-y-5">
                 <div>
-                  <label htmlFor="email" className="mb-2 text-gray-900 dark:text-white">Name</label>
-                  <input type="email" className="mt-2.5 p-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-sm" placeholder="e.g. George" required/>
+                  <label htmlFor="name" className="mb-2 text-gray-900 dark:text-white">Name</label>
+                  <input type="text" value={firstName} onChange={(e) => setName(e.target.value)} className="mt-3.5 p-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-sm" placeholder="e.g. George" required/>
                 </div>
                 <div>
                   <label htmlFor="email" className="mb-2 text-gray-900 dark:text-white">Email</label>
-                  <input type="email" className="mt-2.5 p-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-sm" placeholder="name@example.com" required/>
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-3.5 p-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-sm" placeholder="name@example.com" required/>
                 </div>
 
                 <div>
                   <label htmlFor="password" className="mb-2 text-gray-900 dark:text-white">Password</label>
-                  <input type="password" onChange={handlePasswordChange} value={password} className="mt-2.5 p-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-sm" placeholder="••••••••"/>
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-3.5 p-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-sm" placeholder="••••••••"/>
                 </div>
                 <div className="relative">
                   <label htmlFor="confirmPassword" className="mb-2 text-gray-900 dark:text-white">Confirm Password</label>
-                  {passwordError && (
-                    <p className="absolute top-0 left-5 -mt-3.5 text-white text-sm bg-red-600 p-2.5 border border-red-600 rounded-lg">
-                      {passwordError}
-                    </p>
-                  )}
-                  <input type="password" onChange={handleConfirmPasswordChange} value={confirmPassword} className="mt-2.5 p-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-sm" placeholder="••••••••"/>
+                  <input type="password" value={lastName} onChange={(e) => setConfirmPassword(e.target.value)} className="mt-3.5 p-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-sm" placeholder="••••••••"/>
                 </div>
               </div>
 
+              
+              {/* Submit Button */}
+
+              <button type="submit" className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 mt-9 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Create Account</button>
+              
+              {/* Signup Text */}
+
+              <p className="text-center text-base font-light text-gray-500 dark:text-gray-400 mt-6">
+                Already have an account? <Link href="/login-page" className="font-medium text-blue-600 hover:underline dark:text-blue-500">Login here</Link>
+              </p>
+
               {/* Seperation Div */}
 
-              <div className="flex items-center justify-center space-x-4 mt-6">
+              <div className="flex items-center justify-center space-x-4 mt-4">
                 <div className="border-t-2 border-gray-200 dark:border-gray-700 flex-grow"></div>
                 <span className="text-gray-400">or</span>
                 <div className="border-t-2 border-gray-200 dark:border-gray-700 flex-grow"></div>
@@ -110,16 +137,6 @@ const Signup: React.FC = () => {
                   Sign in with Microsoft
                 </a>
               </div>
-
-              {/* Submit Button */}
-
-              <button type="submit" className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 mt-6 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Create Account</button>
-              
-              {/* Signup Text */}
-
-              <p className="text-center text-base font-light text-gray-500 dark:text-gray-400 mt-6">
-                Already have an account? <Link href="/login-page" className="font-medium text-blue-600 hover:underline dark:text-blue-500">Login here</Link>
-              </p>
             </form>
           </div>        
         </div>

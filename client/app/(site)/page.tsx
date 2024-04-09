@@ -18,26 +18,21 @@ import SelectedCategorySingleton from "./components/globalSelectedCategory";
 import Link from "next/link";
 import { date } from "zod";
 import { title } from "process";
+import { trpcClient } from "./(lib)/trpc";
 
 export default function Home() {
 
-  const cardData = [
-    {
-      title: "Lorem Ipsum 1",
-      content: "Lorem ipsum. Repellendus quidem officiis, nihil animi dicta hic accusamus ipsa, Lorem ipsum, dolor sit amet consectetur adipisicing elit. Corrupti, placeat aspernatur minus magnam unde nobis cum suscipit modi repudiandae iusto non labore autem enim quod debitis deleniti est eos nulla!",
-      author: "Author 1"
-    },
-    {
-      title: "Lorem Ipsum 2",
-      content: "Lorem ipsum. Repellendus quidem officiis, nihil animi dicta hic accusamus ipsa, Lorem ipsum, dolor sit amet consectetur adipisicing elit. Corrupti, placeat aspernatur minus magnam unde nobis cum suscipit modi repudiandae iusto non labore autem enim quod debitis deleniti est eos nulla!",
-      author: "Author 2"
-    },
-    {
-      title: "Lorem Ipsum 3",
-      content: "Lorem ipsum. Repellendus quidem officiis, nihil animi dicta hic accusamus ipsa, Lorem ipsum, dolor sit amet consectetur adipisicing elit. Corrupti, placeat aspernatur minus magnam unde nobis cum suscipit modi repudiandae iusto non labore autem enim quod debitis deleniti est eos nulla!",
-      author: "Author 3"
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+
+  useEffect(() => {
+    const fetchBlogs = async ()  => {
+      const blogsData = await trpcClient.blog.getBlogs.query();
+      setBlogs(blogsData)
     }
-  ];
+    fetchBlogs();
+  }, []);
+
+  const firstThreeBlogs = blogs.slice(0, 3);
 
   const categoriesData = [
     {
@@ -134,8 +129,14 @@ export default function Home() {
 
             <div className="col-span-2">
               <div className="grid grid-rows-3 gap-12">
-                {cardData.map((data, index) => (
-                  <Card key={index} title={data.title} content={data.content} author={data.author} />
+                {firstThreeBlogs.map((blog) => (
+                  <Link href={`/projects/${blog.slug}`} key={blog.id}>
+                  <Card
+                    title={blog.title}
+                    content={blog.description}
+                    author={blog.authorId} // Assuming authorId is the author's name
+                  />
+                  </Link>
                 ))}
               </div>
             </div>
@@ -145,7 +146,7 @@ export default function Home() {
             </h2>
             </div>
             
-            <div className="flex grid grid-rows-1 md:grid-cols-3 md:grid-rows-none gap-y-20 md:gap-x-24 p-8 md:p-0">
+            <div className="grid grid-rows-1 md:grid-cols-3 md:grid-rows-none gap-y-20 md:gap-x-24 p-8 md:p-0">
               <div>
               <div className="grid gap-y-5">
                 <div className="flex justify-left ml-10">

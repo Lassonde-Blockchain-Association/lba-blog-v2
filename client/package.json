@@ -36,6 +36,7 @@
     "@tiptap/pm": "^2.1.12",
     "@tiptap/react": "^2.1.12",
     "@tiptap/starter-kit": "^2.1.12",
+    "@trpc/client": "^10.45.2",
     "@types/node": "20.2.3",
     "@types/react-dom": "18.2.4",
     "class-variance-authority": "^0.6.1",

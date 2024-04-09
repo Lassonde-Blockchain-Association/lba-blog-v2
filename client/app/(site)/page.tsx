@@ -150,17 +150,17 @@ export default function Home() {
               <div>
               <div className="grid gap-y-5">
                 <div className="flex justify-left ml-10">
-                  <button className="p-3 rounded-3xl bg-purple-500 w-40 h-12 border border-white border-2 hover:bg-purple-900 ">
+                  <button className="p-3 rounded-3xl bg-purple-500 w-40 h-12 border-white border-2 hover:bg-purple-900 ">
                   AI/ML
                   </button>
                 </div>
                 <div className="flex justify-left ml-10">
-                  <button className="p-3 rounded-3xl bg-purple-500 w-40 h-15 border border-white border-2 hover:bg-purple-900">
+                  <button className="p-3 rounded-3xl bg-purple-500 w-40 h-15 border-white border-2 hover:bg-purple-900">
                   Blockchain
                   </button>
                 </div>
                 <div className="flex justify-left ml-10">
-                  <button className="p-3 rounded-3xl bg-purple-500 w-40 h-12 border border-white border-2 hover:bg-purple-900">
+                  <button className="p-3 rounded-3xl bg-purple-500 w-40 h-12 border-white border-2 hover:bg-purple-900">
                   Metaverse
                   </button>
                 </div>
@@ -177,7 +177,7 @@ export default function Home() {
             </div>
           <div className="flex justify-center mt-20 mb-20">
             <Link href="https://gemini.google.com/app/c448bf0b46f4ddac">
-              <button className="p-3 rounded-3xl bg-purple-500 w-32 h-12 border border-white border-2 hover:bg-purple-900 light:border-black">
+              <button className="p-3 rounded-3xl bg-purple-500 w-32 h-12 border-white border-2 hover:bg-purple-900 light:border-black">
               Read more
               </button>
             </Link>

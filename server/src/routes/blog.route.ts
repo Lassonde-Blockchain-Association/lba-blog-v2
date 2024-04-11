@@ -1,5 +1,5 @@
 import { router } from "../trpc"
-import * as BlogService from "../services/blog"
+import * as BlogService from "../services/blog.services"
 import { AnyRouter } from "@trpc/server"
 
 export const blogRouter: AnyRouter = router({

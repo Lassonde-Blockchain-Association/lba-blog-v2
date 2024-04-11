@@ -1,19 +1,11 @@
 "use client";
 import "./styles.scss";
-import { useEditor, EditorContent, Editor } from "@tiptap/react";
-import Underline from "@tiptap/extension-underline";
-import BulletList from "@tiptap/extension-bullet-list";
-import OrderedList from "@tiptap/extension-ordered-list";
-import ListItem from "@tiptap/extension-list-item";
-import Link from "@tiptap/extension-link";
-
-import StarterKit from "@tiptap/starter-kit";
+import { EditorContent, Editor } from "@tiptap/react";
 import Toolbar from "./Toolbar";
 
 type Props = {
   editor: Editor | null;
 };
-
 
 const TextEditor = ({ editor }: Props) => {
   return (

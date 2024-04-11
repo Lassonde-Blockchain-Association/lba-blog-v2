@@ -4,6 +4,7 @@ import z from "zod";
 import { trpcClient } from "../../(lib)/trpc";
 import { BlogSchema as blogSchemaBackend } from "../../../../../server/src/schema/blog.schema";
 import { createBlog } from "../../../../../server/src/services/blog.services";
+import cleanseSubmittedBlog from "./CleanseSubmittedBlog";
 
 interface processSubmitBlogProps {
   event: { preventDefault: () => void };
@@ -94,11 +95,11 @@ async function processSubmitBlog({
     return;
   }
 
-  const submittedBlog = {
+  var submittedBlog: blogType = {
     title: formData.title,
     category: formData.category,
     description: formData.description,
-    content: editor?.getHTML().toString(),
+    content: editor?.getHTML().toString() ?? "",
     imageUrl: "",
   };
 
@@ -110,13 +111,7 @@ async function processSubmitBlog({
     return;
   }
 
-  console.log(file);
-
-  console.log(file == undefined);
-
-  console.log(file instanceof File);
-
-  console.log(file);
+  submittedBlog = cleanseSubmittedBlog(submittedBlog);
 
   const form = new FormData();
   form.append("file", file as File);
@@ -131,10 +126,10 @@ async function processSubmitBlog({
     const responseData = await responsefromAPI.json();
     const imageUrl = responseData.imageUrl;
     const result = await trpcClient.blog.createBlog.mutate({
-      title: formData.title,
-      categories: formData.category,
-      description: formData.description,
-      content: editor?.getHTML().toString(),
+      title: submittedBlog.title,
+      categories: submittedBlog.category,
+      description: submittedBlog.description,
+      content: submittedBlog.content,
       imageUrl,
       slug: formData.slug,
     });
@@ -192,3 +187,11 @@ const BlogSchema = z.object({
 });
 
 export default processSubmitBlog;
+
+interface blogType {
+  title: string;
+  category: string[];
+  description: string;
+  content: string;
+  imageUrl: "";
+}

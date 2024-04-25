@@ -3,6 +3,13 @@ import { BlogSchema } from "../../schema/blog.schema"
 import { z } from "zod"
 import slugify from "slugify"
 import { getCurrentUser } from "./session.data"
+import Translator from "short-uuid"
+
+function generateSlug(title: string) {
+    return slugify(
+        title.toLocaleLowerCase() + " " + Translator.generate().substring(0, 5),
+    )
+}
 
 //Get all available blogs in the database
 export async function getBlogs() {
@@ -71,7 +78,7 @@ export async function createBlog(data: z.infer<typeof BlogSchema>) {
             error: "Existing Slug",
         }
 
-    const modifiedSlug = slugify(title)
+    const modifiedSlug = generateSlug(title)
 
     await db.blog.create({
         data: {
@@ -114,6 +121,8 @@ export async function updateBlog(id: string, data: z.infer<typeof BlogSchema>) {
     const exisitingBlog = await getBlogById(id)
     if (!exisitingBlog) return { error: "No blog with this Id" }
 
+    const modifiedSlug = generateSlug(title)
+
     await db.blog
         .update({
             where: {
@@ -125,7 +134,7 @@ export async function updateBlog(id: string, data: z.infer<typeof BlogSchema>) {
                 description,
                 content,
                 imageUrl,
-                slug,
+                slug: modifiedSlug,
                 author: {
                     connect: {
                         id: currentUser.id,

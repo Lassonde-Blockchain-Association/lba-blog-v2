@@ -14,6 +14,7 @@ export async function signIn(values: z.infer<typeof signInSchema>) {
     const validatedFields = signInSchema.safeParse(values)
     if (!validatedFields.success) {
         return {
+            code: 400,
             error: "Something went wrong",
         }
     }
@@ -23,6 +24,7 @@ export async function signIn(values: z.infer<typeof signInSchema>) {
     const existingUser = await getUserByEmail(email)
     if (!existingUser) {
         return {
+            code: 401,
             error: "Wrong credentials",
         }
     }
@@ -34,17 +36,18 @@ export async function signIn(values: z.infer<typeof signInSchema>) {
         password,
         userPassword?.password as string,
     )
-    if (!passwordMatched) return { error: "Wrong credentials" }
+    if (!passwordMatched) return { error: "Wrong credentials", code: 401 }
 
     //Signin with
     const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
     })
-    if (error) return { error }
+    if (error) return { error, code: 401 }
 
     //Get session info only
     return {
+        code: 200,
         user: existingUser.id,
     }
 }
@@ -54,7 +57,8 @@ export async function signUp(values: z.infer<typeof signUpSchema>) {
     const validatedFields = signUpSchema.safeParse(values)
     if (!validatedFields.success) {
         return {
-            error: "Something went wrong",
+            error: "Missing payload",
+            code: 400,
         }
     }
 
@@ -64,6 +68,7 @@ export async function signUp(values: z.infer<typeof signUpSchema>) {
     if (existingUser) {
         return {
             error: "existing user",
+            code: 400,
         }
     }
 
@@ -73,6 +78,7 @@ export async function signUp(values: z.infer<typeof signUpSchema>) {
     })
     if (error) {
         return {
+            code: 401,
             error,
         }
     }
@@ -85,14 +91,21 @@ export async function signUp(values: z.infer<typeof signUpSchema>) {
         console.log("SIGNUP ERROR\n")
         return {
             error: "Internal Server Error",
+            code: 500,
         }
     }
     return {
         success: "Created Successfully",
-        data: data,
+        code: 200,
     }
 }
 
 export async function signOut() {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+        return {
+            code: 401,
+        }
+    }
     return await supabase.auth.signOut()
 }

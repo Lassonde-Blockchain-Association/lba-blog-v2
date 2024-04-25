@@ -101,45 +101,64 @@ export default function Home() {
     }
   }, [selectedCategory, latestBlogs, usedBlogIds]);
 
-  const CardMain = ({ imageUrl, title, description, authorId }) => {
+  const formatDate = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${day}-${month}-${year}`;
+  };
+
+  const CardMain = ({ imageUrl, title, description, authorId, createdAt, categories }) => {
     return (
       <div className="flex flex-col">
-                <div><img src = {imageUrl} className="w-auto h-80 mb-8 rounded-xl md:rounded-none"/></div>
+                <div>
+                  <img src = {imageUrl} className="w-full h-96 mb-8 rounded-xl md:rounded-none object-fill"/>
+                </div>
 
                 <h1 className="text-4xl font-normal mb-5">{title}</h1>
 
                 <p className="mb-8">{description}</p>
                 <div className="flex flex-row justify-between">
                   <div className="flex flex-row items-center">
-                    <div className="p-5 rounded-full bg-gray-300"></div>
-                    <p className="ml-4 text-sm w-fit">{authorId}</p>
-                    <p className="ml-5 md:ml-16 text-sm">Date</p>
+                    {/* <div className="p-5 rounded-full bg-gray-300"></div> */}
+                    {/* <p className="ml-4 text-sm w-fit">{authorId}</p> */}
+                    <p className="ml-5 md:ml-5 text-sm">Date: {createdAt}</p>
                   </div>
-                  <div className="grid grid-cols-2 gap-x-3 md:gap-x-7 items-center">
-                    <div className="p-3 md:p-5 rounded-3xl bg-gray-300 w-16 md:w-32"></div>
-                    <div className="p-3 md:p-5 rounded-3xl bg-gray-300 w-16 md:w-32"></div>
+                  <div className="grid grid-cols-2 gap-x-3 md:gap-x-7 ml-5">
+                    {categories.slice(0, 2).map((category, index) => (
+                      <button key={index} className="p-3 rounded-full text-black bg-gray-300 w-fit md:w-32">
+                        {category}
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>
     );
   };
 
-  const CardSide = ({ imageUrl ,title, description, authorId }) => {
+  const CardSide = ({ imageUrl ,title, description, authorId, createdAt, categories }) => {
     return (
-      <div className="flex gap-6 h-[40%]">
-        <div><img src = {imageUrl} className="w-full h-40 rounded-xl md:rounded-none"/></div>
-        <div className="flex flex-col w-[55%]">
+      <div className="flex gap-6">
+        <div className="w-[45%]">
+          <img src = {imageUrl} className="w-full h-44 rounded-xl md:rounded-none object-fill"/>
+        </div>
+        <div className="flex flex-col justify-center w-[55%]">
           <h2 className="text-2xl text-normal mb-2">{title}</h2>
           <p className="text-xs mb-3">{description}</p>
           <div className="flex flex-row justify-between">
             <div className="flex flex-row items-center">
-              <div className="p-3 rounded-full bg-gray-300"></div>
-              <p className="text-xs ml-3">{authorId}</p>
+              {/* <div className="p-3 rounded-full bg-gray-300"></div> */}
+              {/* <p className="text-xs ml-3">{authorId}</p> */}
             </div>
             <div className="grid md:grid-cols-2 md:gap-x-2 items-center">
-              <div className="hidden md:block p-2.5 rounded-3xl bg-gray-300 w-16"></div>
-              <div className="hidden md:block p-2.5 rounded-3xl bg-gray-300 w-16"></div>
+              {categories.slice(0, 2).map((category, index) => (
+                <button key={index} className="hidden md:block p-1.5 text-xs text-black rounded-3xl bg-gray-300 w-20">
+                  {category}
+                </button>
+              ))}
               <p className="block md:hidden text-xs ml-3">Date</p>
+              <p className="block md:hidden text-xs ml-3">{createdAt}</p>
             </div>
           </div>
         </div>
@@ -147,16 +166,16 @@ export default function Home() {
     );
   };
 
-  const Categories = ({ imageUrl,category, title, authorId })=> {
+  const Categories = ({ imageUrl, category, title, authorId })=> {
     return (
       <div className="flex gap-5 h-full">
-        <img src = {imageUrl} className="flex-col w-[30%]  h-full"/>
+        <img src = {imageUrl} className="flex-col w-[27%] h-48 object-fill"/>
           <div className="flex justify-between flex-col w-[50%] l-[50%]">
           <h4 className="text-2m text-normal mb-2">{category}</h4>
           <p className="text-2xl mb-3">{title}</p>
             <div className="flex flex-row justify-between">
               <div className="flex flex-row items-center">
-                <div className="p-3 rounded-full bg-gray-300"></div>
+                {/* <div className="p-3 rounded-full bg-gray-300"></div> */}
                   <p className="text-xs ml-3">{authorId}</p>
                 </div>
               <div className="grid grid-cols-2 gap-x-2 items-center">
@@ -216,22 +235,24 @@ export default function Home() {
   return (
     <>
       <div>
-        <div className="mt-24 md:mt-20 my-6 md:mx-14">
+        <div className="mt-24 md:mt-20 my-6 md:mx-16">
           <h2 className="font-medium text-5xl text-center text-gray-800 dark:text-blue-50 md:mb-9">
             LBA - Blog
           </h2>
 
-          <div className="grid grid-rows-2 md:grid-cols-5 md:grid-rows-none gap-y-24 md:gap-x-24 p-8 md:p-0">
-            <div className="md:col-span-3">
+          <div className="grid grid-rows-2 md:grid-cols-7 md:grid-rows-none gap-y-24 md:gap-x-24 p-8 md:p-0">
+            <div className="md:col-span-4">
               <CardMain
-                imageUrl={latestBlogs[0].imageUrl}
-                title={latestBlogs[0].title}
-                description={latestBlogs[0].description}
-                authorId={latestBlogs[0].authorId}
+                imageUrl={latestBlogs[1].imageUrl}
+                title={latestBlogs[1].title}
+                description={latestBlogs[1].description}
+                authorId={latestBlogs[1].authorId}
+                createdAt={formatDate(latestBlogs[1].createdAt)}
+                categories={latestBlogs[1].categories}
               />
             </div>
 
-            <div className="col-span-2">
+            <div className="col-span-3">
               <div className="grid grid-rows-3 gap-12">
                 {latestBlogs.slice(1).map((data, index) => (
                   <CardSide
@@ -240,6 +261,8 @@ export default function Home() {
                     title={data.title}
                     description={data.description}
                     authorId={data.authorId}
+                    createdAt={formatDate(data.createdAt)}
+                    categories={data.categories}
                   />
                 ))}
               </div>
@@ -252,20 +275,20 @@ export default function Home() {
         </div>
         <div className="grid grid-rows-1 md:grid-cols-3 md:grid-rows-none gap-y-20 md:gap-x-24 p-8 md:p-0">
           <div>
-            <div className="grid gap-y-5">
-              <div className="flex justify-left ml-10">
+            <div className="grid gap-y-5 ml-28">
+              <div className="flex justify-left">
                 <div
                   onClick={() => handleCategoryClick("AI")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-12  border-black dark:border-white border-2 hover:bg-purple-900 ">
                   AI/ML
                 </div>
               </div>
-              <div className="flex justify-left ml-10">
+              <div className="flex justify-left">
                 <div
                   onClick={() => handleCategoryClick("Blockchain")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-15  border-black dark:border-white border-2 hover:bg-purple-900">
                   Blockchain
                 </div>
               </div>
-              <div className="flex justify-left ml-10">
+              <div className="flex justify-left">
               <div
                   onClick={() => handleCategoryClick("Metaverse")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-15  border-black dark:border-white border-2 hover:bg-purple-900">
                   Metaverse

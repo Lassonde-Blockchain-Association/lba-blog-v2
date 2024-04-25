@@ -182,7 +182,7 @@ export default function CategoryPage() {
       <div className="absolute -z-10">
         <img
           src="/growtika-nGoCBxiaRO0-unsplash.jpg"
-          className="object-cover bg-gradient-to-b opacity-50"
+          className="object-cover bg-gradient-to-b opacity-30"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent dark:to-[hsl(222.2,84%,4.9%)] to-white"></div>
       </div>
@@ -190,7 +190,7 @@ export default function CategoryPage() {
       <div className="container h-full w-full pt-20">
         <div className="my-32 w-8/12">
           <h1 className="text-6xl font-semibold">{defaultCategoryTitle}</h1>
-          <p className="m-2 mt-5 w-full sm:w-6/12">{defaultCategoryDescription}</p> 
+          <p className="m-2 mt-5 w-full sm:w-8/12">{defaultCategoryDescription}</p> 
         </div>
         <div className="grid grid-cols-1 gap-4 gap-y-16 justify-center items-center sm:grid-cols-2 md:grid-cols-3">
           {currentBlogs.map((blog, index) => (
@@ -224,12 +224,20 @@ function Blog({ blog, index }: BlogProps) {
     blogClassName = "justify-end";
   }
 
+  const formatDate = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${day}-${month}-${year}`;
+  };
+
   return (
     <div className={`flex ${blogClassName}`}>
      <Link to={`/projects/${blog.id}`} className="cursor-pointer">
         <SmallBlogCard
           title={blog.title}
-          date={blog.createdAt}
+          date={formatDate(blog.createdAt)}
           author={blog.authorId}
           content={blog.content}
         />

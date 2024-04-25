@@ -16,7 +16,7 @@ const Pagination: React.FC<PaginationProps> = ({
   var hasNext = currentPage < numTotalPages;
 
   return (
-    <div className="flex items-center justify-center gap-x-4 text-base mb-8 mt-5">
+    <div className="flex items-center justify-center gap-x-4 text-base mb-16 mt-12">
       {/* <button onClick={() => onChangePage(1)}>
         &lt;&lt;
       </button> */}

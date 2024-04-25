@@ -34,6 +34,7 @@ const Login: React.FC = () => {
           <Image
             src={image}
             alt="Background"
+            layout="fill"
             objectFit="cover"
             className="absolute inset-0"
           />

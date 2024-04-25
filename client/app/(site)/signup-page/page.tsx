@@ -6,38 +6,19 @@ import Link from "next/link";
 import Logo from "../../../public/logo.png";
 import image from "../../../public/image.jpg";
 import { trpcClient } from "../(lib)/trpc";
+import { TRPCClientError } from "@trpc/client";
 
 const Signup: React.FC = () => {
-  // const [password, setPassword] = useState("");
-  // const [confirmPassword, setConfirmPassword] = useState("");
-  // const [passwordError, setPasswordError] = useState("");
 
-  // const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setPassword(e.target.value);
-  //   validatePasswordMatch(e.target.value, confirmPassword);
-  // };
-
-  // const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setConfirmPassword(e.target.value);
-  //   validatePasswordMatch(password, e.target.value);
-  // };
-
-  // const validatePasswordMatch = (password: string, confirmPassword: string) => {
-  //   if (password !== confirmPassword) {
-  //     setPasswordError("Passwords do not match!!");
-  //   } else {
-  //     setPasswordError("");
-  //   }
-  // };
-
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [firstName, setName] = useState<string>("");
-  const [lastName, setConfirmPassword] = useState<string>("");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    try {
     const result = await trpcClient.auth.signUp.mutate({
       firstName: firstName,
       email: email,
@@ -45,13 +26,29 @@ const Signup: React.FC = () => {
       lastName: lastName,
     });
 
-    console.log(result);
-    console.log([
-      ["Name:", firstName],
-      ["Email:", email],
-      ["Password:", password],
-      ["Confirm Password:", lastName],
-    ]);
+    console.log("Wohooo:", result);
+    if (result.success) {
+      alert("Welcome!! Hope you are ready to contribute");
+
+      // Reset Input Fields
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
+
+    } else if (result.error) {
+        alert("This user already exists!!");
+    }
+    
+    } catch (err) {
+      if (err instanceof TRPCClientError) {
+        const errors = JSON.parse(err.message);
+        const errorMessageString = errors.map(item => `${item.path.join(': ')}: ${item.message}`).join('\n');
+        alert(errorMessageString);
+      } else {
+        throw err;
+      }
+    }
   };
 
   return (
@@ -96,15 +93,30 @@ const Signup: React.FC = () => {
                     htmlFor="name"
                     className="mb-2 text-gray-900 dark:text-white"
                   >
-                    Name
+                    First Name
                   </label>
                   <input
                     type="text"
                     value={firstName}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => setFirstName(e.target.value)}
                     className="mt-3.5 p-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-sm"
                     placeholder="e.g. George"
                     required
+                  />
+                </div>
+                <div className="relative">
+                  <label
+                    htmlFor="confirmPassword"
+                    className="mb-2 text-gray-900 dark:text-white"
+                  >
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="mt-3.5 p-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-sm"
+                    placeholder="e.g. Russell"
                   />
                 </div>
                 <div>
@@ -135,21 +147,6 @@ const Signup: React.FC = () => {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="mt-3.5 p-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-sm"
-                    placeholder="••••••••"
-                  />
-                </div>
-                <div className="relative">
-                  <label
-                    htmlFor="confirmPassword"
-                    className="mb-2 text-gray-900 dark:text-white"
-                  >
-                    Confirm Password
-                  </label>
-                  <input
-                    type="password"
-                    value={lastName}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
                     className="mt-3.5 p-3 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 shadow-sm"
                     placeholder="••••••••"
                   />

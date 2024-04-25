@@ -4,7 +4,7 @@ import React from "react";
 
 function ArticleHead() {
   return (
-    <section className="article bg-gray-800 dark:bg-gray-950 text-white p-20 relative">
+    <section className="article bg-gray-800 dark:bg-gray-950 text-white mt-28 p-20 dark:mt-0 dark:pt-48 relative">
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-2">
         <div className="md:col-span-3 grid grid-cols-2 md:grid-cols-2 gap-4">
           <div>
@@ -102,7 +102,7 @@ function ArticleBody() {
         
         {/* Sidebar for author and featured blogs */}
         <div className="sidebar1 "style={{ width: '330px', margin: '0 auto' }}>
-          <div className="font-bold text-xl text-center mb-2 dark:text-white">Author</div>
+          <div className="font-bold text-xl text-center mb-5 dark:text-white">Author</div>
           <div className="author mb-5 p-4 bg-gray-300 dark:bg-gray-400 rounded-lg" style={{height: '300px'}}>
             <div className="flex justify-center">
               <div className="avatar-placeholder" style={{

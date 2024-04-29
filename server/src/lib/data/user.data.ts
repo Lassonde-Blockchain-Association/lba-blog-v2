@@ -1,6 +1,5 @@
 import { db } from "../db"
 import bcrypt from "bcrypt"
-import { supabase } from "../supabase"
 
 export async function getUserPasswordByEmail(email: string) {
     return await db.author.findUnique({
@@ -17,6 +16,21 @@ export async function getUserByEmail(email: string) {
     return await db.author.findUnique({
         where: {
             email,
+        },
+        select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            createdAt: true,
+        },
+    })
+}
+
+export async function getUserById(id: string) {
+    return await db.author.findUnique({
+        where: {
+            id,
         },
         select: {
             id: true,

@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 
-
 function ArticleHead() {
   return (
     <section className="article bg-gray-800 dark:bg-gray-950 text-white mt-28 p-20 dark:mt-0 dark:pt-48 relative">
@@ -93,9 +92,9 @@ function ArticleBody() {
           </div>
           <div className="flex items-center overflow-x-auto pt-20 pb-10 px-4 -mx-4">
             <span className="font-bold mr-4 text-lg dark:text-white whitespace-nowrap">Categories</span>
-            <button className="border bg-gray-300 rounded-full py-2 px-14 mr-2 whitespace-nowrap">Button 1</button>
-            <button className="border bg-gray-300 rounded-full py-2 px-14 mr-2 whitespace-nowrap">Button 2</button>
-            <button className="border bg-gray-300 rounded-full py-2 px-14 whitespace-nowrap">Button 3</button>
+            <button className="border bg-gray-300 rounded-full py-2 px-14 mr-2 whitespace-nowrap">AI</button>
+            <button className="border bg-gray-300 rounded-full py-2 px-14 mr-2 whitespace-nowrap">Blockchain</button>
+            <button className="border bg-gray-300 rounded-full py-2 px-14 whitespace-nowrap">Metaverse</button>
             {/* ... add as many buttons as needed */}
           </div>
         </div>

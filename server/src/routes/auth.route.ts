@@ -7,3 +7,5 @@ export const authRouter: AnyRouter = router({
     signUp: authService.signUp(),
     signOut: authService.signOut(),
 })
+
+

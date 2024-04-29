@@ -12,6 +12,7 @@ import * as authFunction from "../lib/data/auth.data"
 export function signIn(): AnyProcedure {
     return publicProcedure.input(signInSchema).mutation(async (opts) => {
         const authResult = await authFunction.signIn(opts.input)
+
         if (authResult.error) {
             throw new TRPCError({
                 message: "Wrong Credentials",

@@ -5,13 +5,12 @@ import React from "react";
 import Link from "next/link";
 import { trpcClient } from "./(lib)/trpc";
 
-
 export default function Home() {
   const [latestBlogs, setLatestBlogs] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [usedBlogIds, setUsedBlogIds] = useState([]);
   const [filteredBlogs, setFilteredBlogs] = useState([]);
-
+  const [allAuthors, setAllAuthors] = useState([]);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -19,22 +18,39 @@ export default function Home() {
         const allBlogs = await trpcClient.blog.getBlogs.query();
         console.log("All Blogs:", allBlogs);
         
+        const fetchAuthor = async () => {
+          const authorId = allBlogs.map(blog => blog.authorId);
+        
+          const authorPromises = authorId.map(authorId => {
+            return trpcClient.author.getAuthorById.query({ id: authorId });
+        });
+
+          const allAuthors = await Promise.all(authorPromises);
+
+          console.log("All Authors:", allAuthors);
+
+          setAllAuthors(allAuthors);
+        };
+        fetchAuthor();
+  
         const sortedBlogs = allBlogs
           .sort((a, b) => b.createdAt - a.createdAt) // Sort blogs from latest to oldest
           .slice(0, 4); // Take only the first 4 blogs
-        setLatestBlogs(sortedBlogs);
 
-        setRandomBlogs(allBlogs);
-
-        const usedIds = sortedBlogs.slice(0, 4).map(blog => blog.id);
+          setLatestBlogs(sortedBlogs);
+          console.log(sortedBlogs)
+  
+        const usedIds = sortedBlogs.map(blog => blog.id);
         setUsedBlogIds(usedIds);
-
+  
       } catch (error) {
         console.error("Error fetching blogs:", error);
       }
     };
     fetchBlogs();
-  }, []);
+  }, []); // Empty dependency array ensures this effect runs only once, on mount
+  
+  
 
   useEffect(() => {
     // Set filtered blogs based on selected category
@@ -106,59 +122,66 @@ export default function Home() {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    return `${day}-${month}-${year}`;
+    return `${day}/${month}/${year}`;
   };
 
   const CardMain = ({ imageUrl, title, description, authorId, createdAt, categories }) => {
+
+    const author = allAuthors.find(author => author.id === authorId);
+    const authorName = author ? `${author.firstName} ${author.lastName}` : "Unknown Author";
+  
     return (
       <div className="flex flex-col">
-                <div>
-                  <img src = {imageUrl} className="w-full h-96 mb-8 rounded-xl md:rounded-none object-fill"/>
-                </div>
-
-                <h1 className="text-4xl font-normal mb-5">{title}</h1>
-
-                <p className="mb-8">{description}</p>
-                <div className="flex flex-row justify-between">
-                  <div className="flex flex-row items-center">
-                    {/* <div className="p-5 rounded-full bg-gray-300"></div> */}
-                    {/* <p className="ml-4 text-sm w-fit">{authorId}</p> */}
-                    <p className="ml-5 md:ml-5 text-sm">Date: {createdAt}</p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-x-3 md:gap-x-7 ml-5">
-                    {categories.slice(0, 2).map((category, index) => (
-                      <button key={index} className="p-3 rounded-full text-black bg-gray-300 w-fit md:w-32">
-                        {category}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
+        <div>
+          <img src={imageUrl} className="w-full h-96 mb-8 rounded-xl md:rounded-none object-fill" />
+        </div>
+  
+        <h1 className="text-4xl font-normal mb-5">{title}</h1>
+  
+        <p className="mb-8">{description}</p>
+        <div className="flex flex-row justify-between">
+          <div className="flex flex-row items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="h-6 w-6 rounded-full mr-2 dark:fill-white"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+            <p className="md:ml-4 text-xs md:text-sm w-fit">{authorName}</p>
+            <p className="md:ml-5 text-xs md:text-sm">Date: {createdAt}</p>
+          </div>
+          <div className="flex gap-1.5 md:gap-x-3">
+            {categories.slice(0, 2).map((category, index) => (
+              <button key={index} className="p-2 md:p-3 rounded-full text-black bg-gray-300 w-fit md:w-32 text-xs md:text-base">
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
     );
   };
 
   const CardSide = ({ imageUrl ,title, description, authorId, createdAt, categories }) => {
+
+  const author = allAuthors.find(author => author.id === authorId);
+  const authorName = author ? `${author.firstName} ${author.lastName}` : "Unknown Author";
+
     return (
       <div className="flex gap-6">
         <div className="w-[45%]">
-          <img src = {imageUrl} className="w-full h-44 rounded-xl md:rounded-none object-fill"/>
+          <img src = {imageUrl} className="w-full h-full md:h-44 rounded-xl md:rounded-none object-fill"/>
         </div>
         <div className="flex flex-col justify-center w-[55%]">
-          <h2 className="text-2xl text-normal mb-2">{title}</h2>
-          <p className="text-xs mb-3">{description}</p>
+          <h2 className="text-xl md:text-2xl leading-tight mb-4 md:mb-2">{title}</h2>
+          <p className="text-xs mb-4 md:mb-3">{description}</p>
           <div className="flex flex-row justify-between">
             <div className="flex flex-row items-center">
-              {/* <div className="p-3 rounded-full bg-gray-300"></div> */}
-              {/* <p className="text-xs ml-3">{authorId}</p> */}
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="h-5 w-5 rounded-full mr-2 dark:fill-white"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+              <p className="text-xs">{authorName}</p>
             </div>
-            <div className="grid md:grid-cols-2 md:gap-x-2 items-center">
+            <div className="flex md:gap-x-2">
               {categories.slice(0, 2).map((category, index) => (
                 <button key={index} className="hidden md:block p-1.5 text-xs text-black rounded-3xl bg-gray-300 w-20">
                   {category}
                 </button>
               ))}
-              <p className="block md:hidden text-xs ml-3">Date</p>
-              <p className="block md:hidden text-xs ml-3">{createdAt}</p>
+              <p className="block md:hidden text-xs">Date: {createdAt}</p>
             </div>
           </div>
         </div>
@@ -167,6 +190,10 @@ export default function Home() {
   };
 
   const Categories = ({ imageUrl, category, title, authorId })=> {
+
+    const author = allAuthors.find(author => author.id === authorId);
+    const authorName = author ? `${author.firstName} ${author.lastName}` : "Unknown Author";
+
     return (
       <div className="flex gap-5 h-full">
         <img src = {imageUrl} className="flex-col w-[27%] h-48 object-fill"/>
@@ -176,7 +203,7 @@ export default function Home() {
             <div className="flex flex-row justify-between">
               <div className="flex flex-row items-center">
                 {/* <div className="p-3 rounded-full bg-gray-300"></div> */}
-                  <p className="text-xs ml-3">{authorId}</p>
+                  <p className="text-xs ml-3">{authorName}</p>
                 </div>
               <div className="grid grid-cols-2 gap-x-2 items-center">
             </div>
@@ -235,25 +262,25 @@ export default function Home() {
   return (
     <>
       <div>
-        <div className="mt-24 md:mt-20 my-6 md:mx-16">
-          <h2 className="font-medium text-5xl text-center text-gray-800 dark:text-blue-50 md:mb-9">
+        <div className="mt-32 md:mt-20 my-6 md:mx-16">
+          <h2 className="font-medium text-5xl text-center text-gray-800 dark:text-blue-50 mb-4 md:mb-9">
             LBA - Blog
           </h2>
 
-          <div className="grid grid-rows-2 md:grid-cols-7 md:grid-rows-none gap-y-24 md:gap-x-24 p-8 md:p-0">
-            <div className="md:col-span-4">
+          <div className="grid grid-rows-1 md:grid-cols-7 md:grid-rows-none md:gap-x-14 md:p-0">
+            <div className="md:col-span-4 p-6">
               <CardMain
-                imageUrl={latestBlogs[1].imageUrl}
-                title={latestBlogs[1].title}
-                description={latestBlogs[1].description}
-                authorId={latestBlogs[1].authorId}
-                createdAt={formatDate(latestBlogs[1].createdAt)}
-                categories={latestBlogs[1].categories}
+                imageUrl={latestBlogs[0].imageUrl}
+                title={latestBlogs[0].title}
+                description={latestBlogs[0].description}
+                authorId={latestBlogs[0].authorId}
+                createdAt={formatDate(latestBlogs[0].createdAt)}
+                categories={latestBlogs[0].categories}
               />
             </div>
 
-            <div className="col-span-3">
-              <div className="grid grid-rows-3 gap-12">
+            <div className="md:col-span-3">
+              <div className="grid grid-rows-3 gap-10 p-6">
                 {latestBlogs.slice(1).map((data, index) => (
                   <CardSide
                     key={index}

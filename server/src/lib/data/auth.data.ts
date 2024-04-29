@@ -29,6 +29,7 @@ export async function signIn(values: z.infer<typeof signInSchema>) {
 
     //Password Validataion
     const userPassword = await getUserPasswordByEmail(email)
+
     const passwordMatched = comparePassword(
         password,
         userPassword?.password as string,
@@ -43,10 +44,8 @@ export async function signIn(values: z.infer<typeof signInSchema>) {
     if (error) return { error }
 
     //Get session info only
-    const { user, ...session } = data.session
     return {
-        user: existingUser,
-        session,
+        user: existingUser.id,
     }
 }
 

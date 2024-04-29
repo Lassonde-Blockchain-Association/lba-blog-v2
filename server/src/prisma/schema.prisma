@@ -8,7 +8,7 @@ generator client {
 datasource db {
     provider = "postgresql"
     url      = env("DATABASE_URL")
-    // directUrl = env("DIRECT_URL")
+    directUrl = env("DIRECT_URL")
 }
 
 model Author {
@@ -34,16 +34,7 @@ model Blog {
     authorId    String
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
-    deletedAt   Boolean  @default(false)
+    deleted     Boolean  @default(false)
 }
 
-// enum for categories
-enum Category {
-    AI
-    BLOCKCHAIN
-    CLOUD
-    DEVOPS
-    METAVERSE
-    NFT
-    WEB3
-}
+

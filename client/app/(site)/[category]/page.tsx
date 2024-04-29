@@ -153,23 +153,39 @@ interface SmallBlog {
   id: string;
   title: string;
   createdAt: string;
-  authorId: string;
   content: string;
+  imageUrl?: string;
 }
 
 export default function CategoryPage() {
   const blogsPerPage = 9; 
   const [currentPage, setCurrentPage] = useState(1);
   const [blogs, setBlogs] = useState<SmallBlog[]>([]);
+  const [allAuthors, setAllAuthors] = useState([]);
+  const [allAuthorName, setAllAuthorName] = useState([]);
 
   useEffect(() => {
-    const fetchBlog = async () => {
-      const allBlogs = await trpcClient.blog.getBlogs.query();
-      const aiBlogs = allBlogs.filter(blog => blog.categories.includes("AI"));
-      setBlogs(aiBlogs);
-    };
-    fetchBlog();
-  }, []);  
+  const fetchBlog = async () => {
+    const allBlogs = await trpcClient.blog.getBlogs.query();
+    const aiBlogs = allBlogs.filter(blog => blog.categories.includes("Blockchain"));
+    setBlogs(aiBlogs);
+
+    const authorId = aiBlogs.map(blog => blog.authorId);
+    const authorDetails = authorId.map(authorId => trpcClient.author.getAuthorById.query({ id: authorId }));
+
+    const allAuthors = await Promise.all(authorDetails);
+
+    setAllAuthors(allAuthors);
+
+    // Map each blog to its author's name
+    const authorNames = aiBlogs.map(blog => {
+      const author = allAuthors.find(author => author.id === blog.authorId);
+      return author ? `${author.firstName} ${author.lastName}` : "Unknown Author";
+    });
+    setAllAuthorName(authorNames);
+  };
+  fetchBlog();
+}, []);
 
   const currentBlogs = blogs.slice(currentPage * blogsPerPage - blogsPerPage, currentPage * blogsPerPage);
 
@@ -195,7 +211,7 @@ export default function CategoryPage() {
         <div className="grid grid-cols-1 gap-4 gap-y-16 justify-center items-center sm:grid-cols-2 md:grid-cols-3">
           {currentBlogs.map((blog, index) => (
            <BrowserRouter key={blog.id}>
-              <Blog key={index} blog={blog} index={index} />
+              <Blog key={index} blog={blog} index={index} authorNames={allAuthorName[index]}/>
            </BrowserRouter>
           ))}
         </div>
@@ -212,9 +228,10 @@ export default function CategoryPage() {
 interface BlogProps {
   blog: SmallBlog;
   index: number;
+  authorNames: string;
 }
 
-function Blog({ blog, index }: BlogProps) {
+function Blog({ blog, index, authorNames }: BlogProps) {
   let blogClassName: string;
   if (index % 3 === 0) {
     blogClassName = "justify-start";
@@ -236,9 +253,10 @@ function Blog({ blog, index }: BlogProps) {
     <div className={`flex ${blogClassName}`}>
      <Link to={`/projects/${blog.id}`} className="cursor-pointer">
         <SmallBlogCard
+          imgSrc={blog.imageUrl}
           title={blog.title}
           date={formatDate(blog.createdAt)}
-          author={blog.authorId}
+          author={authorNames}
           content={blog.content}
         />
       </Link>

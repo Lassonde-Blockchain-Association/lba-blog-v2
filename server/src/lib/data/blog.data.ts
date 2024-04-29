@@ -1,15 +1,16 @@
 import { db } from "../db"
 import { BlogSchema } from "../../schema/blog.schema"
 import { z } from "zod"
-import { uploadFile } from "../handler/file.handler"
 import slugify from "slugify"
 import { getCurrentUser } from "./session.data"
 
-const DUMMY_USER_ID = "ebddb50d-cce9-4366-9707-1f61ed23abf3"
-
 //Get all available blogs in the database
 export async function getBlogs() {
-    return db.blog.findMany()
+    return db.blog.findMany({
+        where: {
+            deleted: false,
+        },
+    })
 }
 
 //Get blog by id
@@ -39,7 +40,6 @@ export async function getBlogBySlug(slug: string) {
     })
 }
 //Get Blogs by categories
-//Problem : how to deal with categories ENUM in DB
 export async function getBlogsBycategories(categories: any) {
     return db.blog.findMany({
         where: {
@@ -142,19 +142,22 @@ export async function updateBlog(id: string, data: z.infer<typeof BlogSchema>) {
 
 export async function deleteBlog(id: string) {
     const exisitingBlog = await getBlogById(id)
-    if (!exisitingBlog) return { error: "No blog with this Id" }
+    if (!exisitingBlog) return { error: "No blog with this Id", code: 400 }
 
     const currentUser = await getCurrentUser()
     if (!currentUser) {
         return {
-            error: "Login to create post",
-            code: "UNAUTHORIZED",
+            error: "You are not authorized",
+            code: 401,
         }
     }
     await db.blog
-        .delete({
+        .update({
             where: {
                 id,
+            },
+            data: {
+                deleted: true,
             },
         })
         .catch((error) => {

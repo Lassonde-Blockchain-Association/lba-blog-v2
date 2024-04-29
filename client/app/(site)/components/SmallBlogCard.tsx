@@ -26,19 +26,19 @@ export default function SmallBlogCard({
 }: SmallBlogProps) {
   return (
     <div className="flex flex-col w-96 my-2">
-      <img src={imgSrc} className="   aspect-video" />
+      <img src={imgSrc} className="aspect-video" />
       {/* Replace with IMG later */}
-      <h1 className="mt-2 text-lg font-semibold">{title}</h1>
-      <h2 className="mt-1 text-sm line-clamp-4">{content}</h2>
-      <div className="flex mt-2 items-center">
-        <img
-          src="/user-solid.svg"
-          alt="/user-solid.svg"
-          className="h-6 w-6 rounded-full mr-2 "
-        />
-        <h2 className="text-xs">{author}</h2>
-        <span className="mx-2 h-1 w-1 rounded-full bg-white" />
-        <h2 className="text-xs">{date}</h2>
+      <h1 className="mt-4 text-lg font-semibold">{title}</h1>
+      <h2 className="mt-2 text-sm line-clamp-4">{content}</h2>
+      <div className="flex mt-4 items-center justify-between">
+        <div className="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="h-6 w-6 rounded-full mr-2 dark:fill-white"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+          <h2 className="text-xs">{author}</h2>
+        </div>
+        <div className="flex items-center">
+          <span className="mx-2 h-1 w-1 rounded-full bg-white" />
+          <h2 className="text-xs">{date}</h2>
+        </div>
       </div>
     </div>
   );

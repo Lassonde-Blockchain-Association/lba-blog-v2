@@ -11,13 +11,14 @@ export default function Home() {
   const [usedBlogIds, setUsedBlogIds] = useState([]);
   const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [allAuthors, setAllAuthors] = useState([]);
+  const [selectedBlogId, setSelectedBlogId] = useState(null);
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
         const allBlogs = await trpcClient.blog.getBlogs.query();
         console.log("All Blogs:", allBlogs);
-        
+
         const fetchAuthor = async () => {
           const authorId = allBlogs.map(blog => blog.authorId);
         
@@ -49,8 +50,6 @@ export default function Home() {
     };
     fetchBlogs();
   }, []); // Empty dependency array ensures this effect runs only once, on mount
-  
-  
 
   useEffect(() => {
     // Set filtered blogs based on selected category
@@ -125,91 +124,97 @@ export default function Home() {
     return `${day}/${month}/${year}`;
   };
 
-  const CardMain = ({ imageUrl, title, description, authorId, createdAt, categories }) => {
+  const CardMain = ({ imageUrl, title, description, authorId, createdAt, categories, blogId }) => {
 
     const author = allAuthors.find(author => author.id === authorId);
     const authorName = author ? `${author.firstName} ${author.lastName}` : "Unknown Author";
   
     return (
       <div className="flex flex-col">
-        <div>
-          <img src={imageUrl} className="w-full h-96 mb-8 rounded-xl md:rounded-none object-fill" />
-        </div>
-  
-        <h1 className="text-4xl font-normal mb-5">{title}</h1>
-  
-        <p className="mb-8">{description}</p>
-        <div className="flex flex-row justify-between">
-          <div className="flex flex-row items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="h-6 w-6 rounded-full mr-2 dark:fill-white"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
-            <p className="md:ml-4 text-xs md:text-sm w-fit">{authorName}</p>
-            <p className="md:ml-5 text-xs md:text-sm">Date: {createdAt}</p>
+        <Link href={`/projects/${blogId}`} className="cursor-pointer">
+          <div>
+            <img src={imageUrl} className="w-full h-96 mb-8 rounded-xl md:rounded-none object-fill" />
           </div>
-          <div className="flex gap-1.5 md:gap-x-3">
-            {categories.slice(0, 2).map((category, index) => (
-              <button key={index} className="p-2 md:p-3 rounded-full text-black bg-gray-300 w-fit md:w-32 text-xs md:text-base">
-                {category}
-              </button>
-            ))}
+    
+          <h1 className="text-4xl font-normal mb-5">{title}</h1>
+    
+          <p className="mb-8">{description}</p>
+          <div className="flex flex-row justify-between">
+            <div className="flex flex-row items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="h-6 w-6 rounded-full mr-2 dark:fill-white"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+              <p className="md:ml-4 text-xs md:text-sm w-fit">{authorName}</p>
+              <p className="md:ml-5 text-xs md:text-sm">Date: {createdAt}</p>
+            </div>
+            <div className="flex gap-1.5 md:gap-x-3">
+              {categories.slice(0, 2).map((category, index) => (
+                <button key={index} className="p-2 md:p-3 rounded-full text-black bg-gray-300 w-fit md:w-32 text-xs md:text-base">
+                  {category}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        </Link>
       </div>
     );
   };
 
-  const CardSide = ({ imageUrl ,title, description, authorId, createdAt, categories }) => {
+  const CardSide = ({ imageUrl ,title, description, authorId, createdAt, categories, blogId }) => {
 
   const author = allAuthors.find(author => author.id === authorId);
   const authorName = author ? `${author.firstName} ${author.lastName}` : "Unknown Author";
 
     return (
-      <div className="flex gap-6">
-        <div className="w-[45%]">
-          <img src = {imageUrl} className="w-full h-full md:h-44 rounded-xl md:rounded-none object-fill"/>
-        </div>
-        <div className="flex flex-col justify-center w-[55%]">
-          <h2 className="text-xl md:text-2xl leading-tight mb-4 md:mb-2">{title}</h2>
-          <p className="text-xs mb-4 md:mb-3">{description}</p>
-          <div className="flex flex-row justify-between">
-            <div className="flex flex-row items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="h-5 w-5 rounded-full mr-2 dark:fill-white"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
-              <p className="text-xs">{authorName}</p>
+      <Link href={`/projects/${blogId}`}>
+        <div className="flex gap-6">
+            <div className="w-[45%]">
+              <img src = {imageUrl} className="w-full h-full md:h-44 rounded-xl md:rounded-none object-fill"/>
             </div>
-            <div className="flex md:gap-x-2">
-              {categories.slice(0, 2).map((category, index) => (
-                <button key={index} className="hidden md:block p-1.5 text-xs text-black rounded-3xl bg-gray-300 w-20">
-                  {category}
-                </button>
-              ))}
-              <p className="block md:hidden text-xs">Date: {createdAt}</p>
+            <div className="flex flex-col justify-center w-[55%]">
+              <h2 className="text-xl md:text-2xl leading-tight mb-4 md:mb-2">{title}</h2>
+              <p className="text-xs mb-4 md:mb-3">{description}</p>
+              <div className="flex flex-row justify-between">
+                <div className="flex flex-row items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="h-5 w-5 rounded-full mr-2 dark:fill-white"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+                  <p className="text-xs">{authorName}</p>
+                </div>
+                <div className="flex md:gap-x-2">
+                  {categories.slice(0, 2).map((category, index) => (
+                    <button key={index} className="hidden md:block p-1.5 text-xs text-black rounded-3xl bg-gray-300 w-20">
+                      {category}
+                    </button>
+                  ))}
+                  <p className="block md:hidden text-xs">Date: {createdAt}</p>
+                </div>
+              </div>
             </div>
-          </div>
         </div>
-      </div>
+      </Link>
     );
   };
 
-  const Categories = ({ imageUrl, category, title, authorId })=> {
+  const Categories = ({ imageUrl, category, title, authorId, blogId })=> {
 
     const author = allAuthors.find(author => author.id === authorId);
     const authorName = author ? `${author.firstName} ${author.lastName}` : "Unknown Author";
 
     return (
-      <div className="flex gap-5 h-full">
-        <img src = {imageUrl} className="flex-col w-[27%] h-48 object-fill"/>
-          <div className="flex justify-between flex-col w-[50%] l-[50%]">
-          <h4 className="text-2m text-normal mb-2">{category}</h4>
-          <p className="text-2xl mb-3">{title}</p>
-            <div className="flex flex-row justify-between">
-              <div className="flex flex-row items-center">
-                {/* <div className="p-3 rounded-full bg-gray-300"></div> */}
-                  <p className="text-xs ml-3">{authorName}</p>
-                </div>
-              <div className="grid grid-cols-2 gap-x-2 items-center">
+      <Link href={`/projects/${blogId}`}>
+        <div className="flex gap-5 h-full">
+          <img src = {imageUrl} className="flex-col w-[27%] h-48 object-fill"/>
+            <div className="flex justify-between flex-col w-[50%] l-[50%]">
+            <h4 className="text-2m text-normal mb-2">{category}</h4>
+            <p className="text-2xl mb-3">{title}</p>
+              <div className="flex flex-row justify-between">
+                <div className="flex flex-row items-center">
+                  {/* <div className="p-3 rounded-full bg-gray-300"></div> */}
+                    <p className="text-xs ml-3">{authorName}</p>
+                  </div>
+                <div className="grid grid-cols-2 gap-x-2 items-center">
+              </div>
             </div>
           </div>
         </div>
-       </div>
+      </Link>
     )
   }
  
@@ -276,6 +281,7 @@ export default function Home() {
                 authorId={latestBlogs[0].authorId}
                 createdAt={formatDate(latestBlogs[0].createdAt)}
                 categories={latestBlogs[0].categories}
+                blogId={latestBlogs[0].id}
               />
             </div>
 
@@ -290,6 +296,7 @@ export default function Home() {
                     authorId={data.authorId}
                     createdAt={formatDate(data.createdAt)}
                     categories={data.categories}
+                    blogId={data.id}
                   />
                 ))}
               </div>
@@ -332,6 +339,7 @@ export default function Home() {
                   category={data.categories.join(", ")}
                   title={data.title}
                   authorId={data.authorId}
+                  blogId={data.id}
                 />
               ))}
             </div>

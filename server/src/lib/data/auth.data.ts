@@ -1,9 +1,14 @@
 import { signInSchema, signUpSchema } from "../../schema/auth.schema"
 import { supabase } from "../supabase"
 import z from "zod"
-import { createUser, getUserByEmail, getUserPasswordByEmail } from "./user.data"
+import {
+    getUserByEmail,
+    getUserPasswordByEmail,
+    hashPassword,
+} from "./user.data"
 import bcrypt from "bcrypt"
 import { getCurrentUser } from "./session.data"
+import { randomUUID } from "crypto"
 
 function comparePassword(password: string, userPassword: string) {
     return bcrypt.compareSync(password, userPassword)
@@ -72,9 +77,16 @@ export async function signUp(values: z.infer<typeof signUpSchema>) {
         }
     }
 
+    //Only create user record after confirmation (through supabase trigger)
     const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+            data: {
+                firstName,
+                lastName,
+            },
+        },
     })
     if (error) {
         return {
@@ -82,21 +94,9 @@ export async function signUp(values: z.infer<typeof signUpSchema>) {
             error,
         }
     }
-
-    const createUserResult = await createUser({
-        id: data.user?.id as string,
-        ...validatedFields.data,
-    })
-    if (!createUserResult) {
-        console.log("SIGNUP ERROR\n")
-        return {
-            error: "Internal Server Error",
-            code: 500,
-        }
-    }
     return {
         success: "Created Successfully",
-        code: 200,
+        code: 201,
     }
 }
 

@@ -1,11 +1,9 @@
 import { AnyRouter } from "@trpc/server"
 import { router } from "../trpc"
-import * as authService from "../services/auth.services"
+import * as authProcedures from "../procedures/auth.procedures"
 
 export const authRouter: AnyRouter = router({
-    signIn: authService.signIn(),
-    signUp: authService.signUp(),
-    signOut: authService.signOut(),
+    signIn: authProcedures.signIn(),
+    signUp: authProcedures.signUp(),
+    signOut: authProcedures.signOut(),
 })
-
-

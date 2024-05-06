@@ -22,7 +22,7 @@ export function signIn(): AnyProcedure {
 
         if (signInResult.code == 400) {
             throw new TRPCError({
-                message: "Bad Request",
+                message: "Invalid Request",
                 code: "BAD_REQUEST",
             })
         }

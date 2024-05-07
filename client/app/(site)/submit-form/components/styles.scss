@@ -1,0 +1,76 @@
+/* Basic editor styles */
+$light-border-color: #304156;
+$dark-border-color: #ffffff;
+
+.tiptap:focus {
+  outline:none;
+}
+
+.tiptap {
+  > * + * {
+    margin-top: 0.75em;
+    &:focus {
+      outline: none;
+    }
+  }
+
+  ul {
+    margin: 0 1rem;
+    list-style-type: disc;
+  }
+
+  ol {
+    margin: 0 1rem;
+    list-style-type: decimal;
+  }
+
+  h1 {
+    display: block;
+    font-size: 2em;
+    font-weight: bold;
+  }
+
+  h2 {
+    display: block;
+    font-size: 1.5em;
+    margin-left: 0;
+    margin-right: 0;
+    font-weight: bold;
+  }
+
+  h3 {
+    display: block;
+    font-size: 1.17em;
+    font-weight: bold;
+  }
+
+  h4 {
+    display: block;
+    font-size: 1em;
+    font-weight: bold;
+  }
+  blockquote {
+    margin-right: 0.3em;
+    padding-left: 0.5rem;
+    border-left: 2px solid;
+
+    .light & {
+      border-color: rgba($light-border-color, 0.5);
+    }
+
+    .dark & {
+      border-color: rgba($dark-border-color, 0.5);
+    }
+  }
+  a {
+    border-bottom: 1px solid;
+
+    .light & {
+      color: #5badec;
+    }
+
+    .dark & {
+      color: #68cef8;
+    }
+  }
+}

@@ -1,18 +1,11 @@
 import { signInSchema, signUpSchema } from "../../schema/auth.schema"
 import { supabase } from "../supabase"
 import z from "zod"
-import {
-    getUserByEmail,
-    getUserPasswordByEmail,
-    hashPassword,
-} from "./user.data"
 import bcrypt from "bcrypt"
 import { getCurrentUser } from "./session.data"
 import { randomUUID } from "crypto"
+import { getUserByEmail } from "./user.data"
 
-function comparePassword(password: string, userPassword: string) {
-    return bcrypt.compareSync(password, userPassword)
-}
 //All the auth routes should use Supabase only
 export async function signIn(values: z.infer<typeof signInSchema>) {
     //Data Validation
@@ -34,15 +27,6 @@ export async function signIn(values: z.infer<typeof signInSchema>) {
         }
     }
 
-    //Password Validataion
-    const userPassword = await getUserPasswordByEmail(email)
-
-    const passwordMatched = comparePassword(
-        password,
-        userPassword?.password as string,
-    )
-    if (!passwordMatched) return { error: "Wrong credentials", code: 401 }
-
     //Signin with
     const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -53,7 +37,7 @@ export async function signIn(values: z.infer<typeof signInSchema>) {
     //Get session info only
     return {
         code: 200,
-        user: existingUser.id,
+        user: data.user.id,
     }
 }
 

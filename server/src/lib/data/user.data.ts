@@ -1,17 +1,6 @@
 import { db } from "../db"
 import bcrypt from "bcrypt"
 
-export async function getUserPasswordByEmail(email: string) {
-    return await db.author.findUnique({
-        where: {
-            email,
-        },
-        select: {
-            password: true,
-        },
-    })
-}
-
 export async function getUserByEmail(email: string) {
     return await db.author.findUnique({
         where: {

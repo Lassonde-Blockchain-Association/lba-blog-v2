@@ -13,8 +13,8 @@ export function getAllBlogs(): AnyProcedure {
 export function getBlogById(): AnyProcedure {
     return publicProcedure
         .input(z.object({ id: z.string() }))
-        .query(({ input }) => {
-            const post = blogFunction.getBlogById(input.id)
+        .query(async (opts) => {
+            const post = await blogFunction.getBlogById(opts.input.id)
             if (!post)
                 throw new TRPCError({
                     code: "NOT_FOUND",
@@ -27,8 +27,8 @@ export function getBlogById(): AnyProcedure {
 export function getBlogBySlug(): AnyProcedure {
     return publicProcedure
         .input(z.object({ slug: z.string() }))
-        .query(({ input }) => {
-            const blog = blogFunction.getBlogBySlug(input.slug)
+        .query(async (opts) => {
+            const blog = await blogFunction.getBlogBySlug(opts.input.slug)
             if (!blog)
                 throw new TRPCError({
                     code: "NOT_FOUND",
@@ -42,9 +42,20 @@ export function getBlogsByAuthorId(): AnyProcedure {
     return publicProcedure
         .input(z.object({ id: z.string() }))
         .query(async (opts) => {
-            const blogs = blogFunction.getBlogsByAuthorId(opts.input.id)
-            if ((await blogs).length == 0)
-                throw new TRPCError({ code: "NOT_FOUND" })
+            const blogs = await blogFunction.getBlogsByAuthorId(opts.input.id)
+            if (blogs.length == 0) throw new TRPCError({ code: "NOT_FOUND" })
+            return blogs
+        })
+}
+
+export function getBlogsByCategories(): AnyProcedure {
+    return publicProcedure
+        .input(z.object({ category: z.string() }))
+        .query(async (opts) => {
+            const blogs = await blogFunction.getBlogsByCategories(
+                opts.input.category,
+            )
+            if (blogs.length == 0) throw new TRPCError({ code: "NOT_FOUND" })
             return blogs
         })
 }

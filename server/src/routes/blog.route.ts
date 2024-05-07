@@ -7,6 +7,7 @@ export const blogRouter: AnyRouter = router({
     getById: BlogProcedures.getBlogById(),
     getBySlug: BlogProcedures.getBlogBySlug(),
     getAuthorBlogs: BlogProcedures.getBlogsByAuthorId(),
+    getByCategory: BlogProcedures.getBlogsByCategories(),
     createBlog: BlogProcedures.createBlog(),
     updateBlog: BlogProcedures.updateBlog(),
     deleteBlog: BlogProcedures.deleteBlog(),

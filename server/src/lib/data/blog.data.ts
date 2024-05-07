@@ -47,7 +47,7 @@ export async function getBlogBySlug(slug: string) {
     })
 }
 //Get Blogs by categories
-export async function getBlogsBycategories(categories: any) {
+export async function getBlogsByCategories(categories: any) {
     return db.blog.findMany({
         where: {
             categories: categories,

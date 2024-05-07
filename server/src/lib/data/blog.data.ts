@@ -14,8 +14,6 @@ function generateSlug(title: string) {
 //Get all available blogs in the database
 export async function getBlogs() {
     return db.blog.findMany({
-        deleted: false,
-
         where: {
             deleted: false,
         },
@@ -25,9 +23,9 @@ export async function getBlogs() {
 //Get blog by id
 export async function getBlogById(id: string) {
     return db.blog.findUnique({
-        deleted: false,
-
         where: {
+            deleted: false,
+
             id,
         },
     })
@@ -36,9 +34,9 @@ export async function getBlogById(id: string) {
 //Get all blogs by Author with given id
 export async function getBlogsByAuthorId(authorId: string) {
     return db.blog.findMany({
-        deleted: false,
-
         where: {
+            deleted: false,
+
             authorId,
         },
     })
@@ -80,14 +78,8 @@ export async function createBlog(data: z.infer<typeof BlogSchema>) {
         }
     }
 
-    const { title, categories, description, content, imageUrl, slug } =
+    const { title, categories, description, content, imageUrl } =
         validatedBlog.data
-
-    const existingBlogbySlug = await getBlogBySlug(slug)
-    if (existingBlogbySlug)
-        return {
-            error: "Existing Slug",
-        }
 
     const modifiedSlug = generateSlug(title)
 
@@ -127,7 +119,7 @@ export async function updateBlog(id: string, data: z.infer<typeof BlogSchema>) {
         }
     }
 
-    const { title, categories, slug, description, content, imageUrl } =
+    const { title, categories, description, content, imageUrl } =
         validatedBlog.data
     const exisitingBlog = await getBlogById(id)
     if (!exisitingBlog) return { error: "No blog with this Id" }

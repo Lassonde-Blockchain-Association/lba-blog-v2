@@ -18,13 +18,17 @@ export default function Home() {
       try {
         const allBlogs = await trpcClient.blog.getBlogs.query();
         console.log("All Blogs:", allBlogs);
+        console.log(
+          "Blogs by categories:",
+          await trpcClient.blog.getByCategory.query({ category: "AI" })
+        );
 
         const fetchAuthor = async () => {
-          const authorId = allBlogs.map(blog => blog.authorId);
-        
-          const authorPromises = authorId.map(authorId => {
+          const authorId = allBlogs.map((blog) => blog.authorId);
+
+          const authorPromises = authorId.map((authorId) => {
             return trpcClient.author.getAuthorById.query({ id: authorId });
-        });
+          });
 
           const allAuthors = await Promise.all(authorPromises);
 
@@ -33,17 +37,16 @@ export default function Home() {
           setAllAuthors(allAuthors);
         };
         fetchAuthor();
-  
+
         const sortedBlogs = allBlogs
           .sort((a, b) => b.createdAt - a.createdAt) // Sort blogs from latest to oldest
           .slice(0, 4); // Take only the first 4 blogs
 
-          setLatestBlogs(sortedBlogs);
-          console.log(sortedBlogs)
-  
-        const usedIds = sortedBlogs.map(blog => blog.id);
+        setLatestBlogs(sortedBlogs);
+        console.log(sortedBlogs);
+
+        const usedIds = sortedBlogs.map((blog) => blog.id);
         setUsedBlogIds(usedIds);
-  
       } catch (error) {
         console.error("Error fetching blogs:", error);
       }
@@ -60,8 +63,8 @@ export default function Home() {
     } else {
       // If category selected, show blogs for that category
       const blogsForCategory = latestBlogs
-        .filter(blog => blog.categories.includes(selectedCategory))
-        .filter(blog => !usedBlogIds.includes(blog.id))
+        .filter((blog) => blog.categories.includes(selectedCategory))
+        .filter((blog) => !usedBlogIds.includes(blog.id))
         .slice(0, 2);
       setFilteredBlogs(blogsForCategory);
     }
@@ -74,36 +77,40 @@ export default function Home() {
   // Function to get default blogs for each category
   const getDefaultBlogs = () => {
     const defaultBlogs = {
-      "AI": [],
-      "Blockchain": [],
-      "Metaverse": []
+      AI: [],
+      Blockchain: [],
+      Metaverse: [],
     };
-  
-    latestBlogs.forEach(blog => {
-      blog.categories.forEach(category => {
-        if (defaultBlogs[category] && defaultBlogs[category].length < 3 && !usedBlogIds.includes(blog.id)) {
+
+    latestBlogs.forEach((blog) => {
+      blog.categories.forEach((category) => {
+        if (
+          defaultBlogs[category] &&
+          defaultBlogs[category].length < 3 &&
+          !usedBlogIds.includes(blog.id)
+        ) {
           defaultBlogs[category].push(blog);
         }
       });
     });
-  
+
     // Ensure only three blogs are selected per category
     for (const category in defaultBlogs) {
       defaultBlogs[category] = defaultBlogs[category].slice(0, 3);
     }
-  
+
     return defaultBlogs[selectedCategory] || [];
   };
-  
+
   // Function to filter blogs by category, case-insensitive
   const filterBlogsByCategory = (category) => {
     const lowercaseCategory = category.toLowerCase();
-    const filtered = latestBlogs.filter(blog =>
-      blog.categories.some(cat => cat.toLowerCase() === lowercaseCategory)
+    const filtered = latestBlogs.filter((blog) =>
+      blog.categories.some((cat) => cat.toLowerCase() === lowercaseCategory)
     );
     return filtered;
   };
-  
+
   useEffect(() => {
     if (selectedCategory === "") {
       // If no category selected, show default blogs
@@ -119,35 +126,56 @@ export default function Home() {
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${day}/${month}/${year}`;
   };
 
-  const CardMain = ({ imageUrl, title, description, authorId, createdAt, categories, blogId }) => {
+  const CardMain = ({
+    imageUrl,
+    title,
+    description,
+    authorId,
+    createdAt,
+    categories,
+    blogId,
+  }) => {
+    const author = allAuthors.find((author) => author.id === authorId);
+    const authorName = author
+      ? `${author.firstName} ${author.lastName}`
+      : "Unknown Author";
 
-    const author = allAuthors.find(author => author.id === authorId);
-    const authorName = author ? `${author.firstName} ${author.lastName}` : "Unknown Author";
-  
     return (
       <div className="flex flex-col">
         <Link href={`/projects/${blogId}`} className="cursor-pointer">
           <div>
-            <img src={imageUrl} className="w-full h-96 mb-8 rounded-xl md:rounded-none object-fill" />
+            <img
+              src={imageUrl}
+              className="w-full h-96 mb-8 rounded-xl md:rounded-none object-fill"
+            />
           </div>
-    
+
           <h1 className="text-4xl font-normal mb-5">{title}</h1>
-    
+
           <p className="mb-8">{description}</p>
           <div className="flex flex-row justify-between">
             <div className="flex flex-row items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="h-6 w-6 rounded-full mr-2 dark:fill-white"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 448 512"
+                className="h-6 w-6 rounded-full mr-2 dark:fill-white"
+              >
+                <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z" />
+              </svg>
               <p className="md:ml-4 text-xs md:text-sm w-fit">{authorName}</p>
               <p className="md:ml-5 text-xs md:text-sm">Date: {createdAt}</p>
             </div>
             <div className="flex gap-1.5 md:gap-x-3">
               {categories.slice(0, 2).map((category, index) => (
-                <button key={index} className="p-2 md:p-3 rounded-full text-black bg-gray-300 w-fit md:w-32 text-xs md:text-base">
+                <button
+                  key={index}
+                  className="p-2 md:p-3 rounded-full text-black bg-gray-300 w-fit md:w-32 text-xs md:text-base"
+                >
                   {category}
                 </button>
               ))}
@@ -158,66 +186,89 @@ export default function Home() {
     );
   };
 
-  const CardSide = ({ imageUrl ,title, description, authorId, createdAt, categories, blogId }) => {
-
-  const author = allAuthors.find(author => author.id === authorId);
-  const authorName = author ? `${author.firstName} ${author.lastName}` : "Unknown Author";
+  const CardSide = ({
+    imageUrl,
+    title,
+    description,
+    authorId,
+    createdAt,
+    categories,
+    blogId,
+  }) => {
+    const author = allAuthors.find((author) => author.id === authorId);
+    const authorName = author
+      ? `${author.firstName} ${author.lastName}`
+      : "Unknown Author";
 
     return (
       <Link href={`/projects/${blogId}`}>
         <div className="flex gap-6">
-            <div className="w-[45%]">
-              <img src = {imageUrl} className="w-full h-full md:h-44 rounded-xl md:rounded-none object-fill"/>
-            </div>
-            <div className="flex flex-col justify-center w-[55%]">
-              <h2 className="text-xl md:text-2xl leading-tight mb-4 md:mb-2">{title}</h2>
-              <p className="text-xs mb-4 md:mb-3">{description}</p>
-              <div className="flex flex-row justify-between">
-                <div className="flex flex-row items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="h-5 w-5 rounded-full mr-2 dark:fill-white"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
-                  <p className="text-xs">{authorName}</p>
-                </div>
-                <div className="flex md:gap-x-2">
-                  {categories.slice(0, 2).map((category, index) => (
-                    <button key={index} className="hidden md:block p-1.5 text-xs text-black rounded-3xl bg-gray-300 w-20">
-                      {category}
-                    </button>
-                  ))}
-                  <p className="block md:hidden text-xs">Date: {createdAt}</p>
-                </div>
+          <div className="w-[45%]">
+            <img
+              src={imageUrl}
+              className="w-full h-full md:h-44 rounded-xl md:rounded-none object-fill"
+            />
+          </div>
+          <div className="flex flex-col justify-center w-[55%]">
+            <h2 className="text-xl md:text-2xl leading-tight mb-4 md:mb-2">
+              {title}
+            </h2>
+            <p className="text-xs mb-4 md:mb-3">{description}</p>
+            <div className="flex flex-row justify-between">
+              <div className="flex flex-row items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 448 512"
+                  className="h-5 w-5 rounded-full mr-2 dark:fill-white"
+                >
+                  <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z" />
+                </svg>
+                <p className="text-xs">{authorName}</p>
               </div>
-            </div>
-        </div>
-      </Link>
-    );
-  };
-
-  const Categories = ({ imageUrl, category, title, authorId, blogId })=> {
-
-    const author = allAuthors.find(author => author.id === authorId);
-    const authorName = author ? `${author.firstName} ${author.lastName}` : "Unknown Author";
-
-    return (
-      <Link href={`/projects/${blogId}`}>
-        <div className="flex gap-5 h-full">
-          <img src = {imageUrl} className="flex-col w-[27%] h-48 object-fill"/>
-            <div className="flex justify-between flex-col w-[50%] l-[50%]">
-            <h4 className="text-2m text-normal mb-2">{category}</h4>
-            <p className="text-2xl mb-3">{title}</p>
-              <div className="flex flex-row justify-between">
-                <div className="flex flex-row items-center">
-                  {/* <div className="p-3 rounded-full bg-gray-300"></div> */}
-                    <p className="text-xs ml-3">{authorName}</p>
-                  </div>
-                <div className="grid grid-cols-2 gap-x-2 items-center">
+              <div className="flex md:gap-x-2">
+                {categories.slice(0, 2).map((category, index) => (
+                  <button
+                    key={index}
+                    className="hidden md:block p-1.5 text-xs text-black rounded-3xl bg-gray-300 w-20"
+                  >
+                    {category}
+                  </button>
+                ))}
+                <p className="block md:hidden text-xs">Date: {createdAt}</p>
               </div>
             </div>
           </div>
         </div>
       </Link>
-    )
-  }
- 
+    );
+  };
+
+  const Categories = ({ imageUrl, category, title, authorId, blogId }) => {
+    const author = allAuthors.find((author) => author.id === authorId);
+    const authorName = author
+      ? `${author.firstName} ${author.lastName}`
+      : "Unknown Author";
+
+    return (
+      <Link href={`/projects/${blogId}`}>
+        <div className="flex gap-5 h-full">
+          <img src={imageUrl} className="flex-col w-[27%] h-48 object-fill" />
+          <div className="flex justify-between flex-col w-[50%] l-[50%]">
+            <h4 className="text-2m text-normal mb-2">{category}</h4>
+            <p className="text-2xl mb-3">{title}</p>
+            <div className="flex flex-row justify-between">
+              <div className="flex flex-row items-center">
+                {/* <div className="p-3 rounded-full bg-gray-300"></div> */}
+                <p className="text-xs ml-3">{authorName}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-x-2 items-center"></div>
+            </div>
+          </div>
+        </div>
+      </Link>
+    );
+  };
+
   // const getRandomBlogs = () => {
   //   // Shuffle all blogs
   //   const shuffledBlogs = [...latestBlogs].sort(() => Math.random() - 0.5);
@@ -259,10 +310,10 @@ export default function Home() {
   //   }
   // }, [selectedCategory]);
 
- // Render null if latestBlogs is empty or undefined
- if (!latestBlogs || latestBlogs.length === 0) {
-  return null;
-}
+  // Render null if latestBlogs is empty or undefined
+  if (!latestBlogs || latestBlogs.length === 0) {
+    return null;
+  }
 
   return (
     <>
@@ -312,19 +363,25 @@ export default function Home() {
             <div className="grid gap-y-5 ml-28">
               <div className="flex justify-left">
                 <div
-                  onClick={() => handleCategoryClick("AI")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-12  border-black dark:border-white border-2 hover:bg-purple-900 ">
+                  onClick={() => handleCategoryClick("AI")}
+                  className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-12  border-black dark:border-white border-2 hover:bg-purple-900 "
+                >
                   AI/ML
                 </div>
               </div>
               <div className="flex justify-left">
                 <div
-                  onClick={() => handleCategoryClick("Blockchain")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-15  border-black dark:border-white border-2 hover:bg-purple-900">
+                  onClick={() => handleCategoryClick("Blockchain")}
+                  className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-15  border-black dark:border-white border-2 hover:bg-purple-900"
+                >
                   Blockchain
                 </div>
               </div>
               <div className="flex justify-left">
-              <div
-                  onClick={() => handleCategoryClick("Metaverse")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-15  border-black dark:border-white border-2 hover:bg-purple-900">
+                <div
+                  onClick={() => handleCategoryClick("Metaverse")}
+                  className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-15  border-black dark:border-white border-2 hover:bg-purple-900"
+                >
                   Metaverse
                 </div>
               </div>
@@ -332,16 +389,17 @@ export default function Home() {
           </div>
           <div className="col-span-2">
             <div className="grid grid-rows-2 gap-12">
-            {filteredBlogs && filteredBlogs.map((data, index) => (
-                <Categories
-                  key={index}
-                  imageUrl={data.imageUrl}
-                  category={data.categories.join(", ")}
-                  title={data.title}
-                  authorId={data.authorId}
-                  blogId={data.id}
-                />
-              ))}
+              {filteredBlogs &&
+                filteredBlogs.map((data, index) => (
+                  <Categories
+                    key={index}
+                    imageUrl={data.imageUrl}
+                    category={data.categories.join(", ")}
+                    title={data.title}
+                    authorId={data.authorId}
+                    blogId={data.id}
+                  />
+                ))}
             </div>
           </div>
         </div>

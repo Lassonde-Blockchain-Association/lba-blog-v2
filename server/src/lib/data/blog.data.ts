@@ -14,6 +14,8 @@ function generateSlug(title: string) {
 //Get all available blogs in the database
 export async function getBlogs() {
     return db.blog.findMany({
+        deleted: false,
+
         where: {
             deleted: false,
         },
@@ -23,6 +25,8 @@ export async function getBlogs() {
 //Get blog by id
 export async function getBlogById(id: string) {
     return db.blog.findUnique({
+        deleted: false,
+
         where: {
             id,
         },
@@ -32,6 +36,8 @@ export async function getBlogById(id: string) {
 //Get all blogs by Author with given id
 export async function getBlogsByAuthorId(authorId: string) {
     return db.blog.findMany({
+        deleted: false,
+
         where: {
             authorId,
         },
@@ -43,6 +49,7 @@ export async function getBlogBySlug(slug: string) {
     return db.blog.findUnique({
         where: {
             slug,
+            deleted: false,
         },
     })
 }
@@ -50,7 +57,11 @@ export async function getBlogBySlug(slug: string) {
 export async function getBlogsByCategories(categories: any) {
     return db.blog.findMany({
         where: {
-            categories: categories,
+            deleted: false,
+
+            categories: {
+                has: categories,
+            },
         },
     })
 }

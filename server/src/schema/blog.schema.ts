@@ -12,5 +12,4 @@ export const BlogSchema = z.object({
         .max(512, { message: "Description must be 512 characters or less" }),
     content: z.string(),
     imageUrl: z.string(),
-    slug: z.string(),
 })

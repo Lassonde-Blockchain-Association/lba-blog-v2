@@ -6,6 +6,8 @@ import Link from "next/link";
 import image from "../../../public/image.jpg";
 import Logo from "../../../public/logo.png";
 import { trpcClient } from "../(lib)/trpc";
+import { redirect } from "react-router-dom";
+import Error from "next/error";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -19,10 +21,9 @@ const Login: React.FC = () => {
         email: email,
         password: password,
       });
-      
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("userEmail", data); // Store user email or other info
 
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("userEmail", result.token); // Store user email or other info
     } catch (error) {
       // Check if the error is due to wrong credentials
       if (error.message === "Wrong Credentials") {

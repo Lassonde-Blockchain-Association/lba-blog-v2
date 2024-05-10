@@ -1,3 +1,3 @@
 export const corsConfig = {
-    origin: process.env.CLIENT_URI,
+    origin: process.env.CLIENT_URL as string,
 }

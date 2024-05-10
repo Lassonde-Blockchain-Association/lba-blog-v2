@@ -102,7 +102,7 @@ export async function createBlog(data: z.infer<typeof BlogSchema>) {
         },
     })
 
-    return { success: "Blog created successfully" }
+    return { success: "Blog created successfully", code: 200 }
 }
 
 //Update blog

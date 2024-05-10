@@ -5,6 +5,7 @@ import bcrypt from "bcrypt"
 import { getCurrentUser } from "./session.data"
 import { randomUUID } from "crypto"
 import { getUserByEmail } from "./user.data"
+import jwt,{Secret} from "jsonwebtoken"
 
 //All the auth routes should use Supabase only
 export async function signIn(values: z.infer<typeof signInSchema>) {
@@ -34,10 +35,15 @@ export async function signIn(values: z.infer<typeof signInSchema>) {
     })
     if (error) return { error, code: 401 }
 
+    const token = jwt.sign({userId:data.user.id},process.env.LOGIN_SECRET as Secret, {
+        expiresIn:"1 Day"
+    })
+
     //Get session info only
     return {
         code: 200,
-        user: data.user.id,
+        token
+
     }
 }
 

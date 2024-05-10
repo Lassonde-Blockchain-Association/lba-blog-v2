@@ -1,6 +1,5 @@
 import { CreateExpressContextOptions } from "@trpc/server/adapters/express"
 import { supabase } from "../supabase"
-
 export async function createAuthContext({
     req,
     res,
@@ -8,7 +7,7 @@ export async function createAuthContext({
     const { data, error } = await supabase.auth.getSession()
     if (data.session) {
         const { user, ...session } = data.session
-        return { session }
+        return { userId: user.id,session }
     }
     return { error }
 }

@@ -10,7 +10,8 @@ export function generateFileName() {
 
 export async function uploadFile(file: Express.Multer.File) {
     try {
-        const fileName = generateFileName() + file.originalname
+        const extension = file.originalname.split(".").pop();
+        const fileName = generateFileName() + "."+extension
 
         const { data, error } = await supabase.storage
             .from(BUCKET_NAME)
@@ -19,7 +20,7 @@ export async function uploadFile(file: Express.Multer.File) {
             })
 
         if (error) {
-            throw new Error("Upload file error")
+            throw new Error("Upload file error" )
         }
 
         const imageUrl = supabase.storage

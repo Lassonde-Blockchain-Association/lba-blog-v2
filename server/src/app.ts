@@ -17,7 +17,7 @@ app.use(
         createContext: createAuthContext,
     }),
 )
-app.use("/api", uploadRouter)
+app.use("/api",uploadRouter)
 
 const port = process.env.PORT ? process.env.PORT : 3001
 app.listen(port, () => {

@@ -1,24 +1,25 @@
 "use client"
 
 import * as React from "react"
-
+import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { cn } from "@/lib/utils"
+import { Check } from "lucide-react";
 
-const DropdownMenu = DropdownMenuItem.Root
+const DropdownMenu = DropdownMenuPrimitive.Root
 
-const DropdownMenuTrigger = DropdownMenuItem.Trigger
-  
-const DropdownMenuGroup = DropdownMenuItem.Group
+const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
 
-const DropdownMenuPortal = DropdownMenuItem.Portal
+const DropdownMenuGroup = DropdownMenuPrimitive.Group
 
-const DropdownMenuSub = DropdownMenuItem.Sub
+const DropdownMenuPortal = DropdownMenuPrimitive.Portal
 
-const DropdownMenuRadioGroup = DropdownMenuItem.RadioGroup
+const DropdownMenuSub = DropdownMenuPrimitive.Sub
+
+const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
 
 const DropdownMenuSubTrigger = React.forwardRef<
-  React.ElementRef<typeof DropdownMenuItem.SubTrigger>,
-  React.ComponentPropsWithoutRef<typeof DropdownMenuItem.SubTrigger> & {
+  React.ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger> & {
     inset?: boolean
   }
 >(({ className, inset, children, ...props }, ref) => (
@@ -36,7 +37,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
   </DropdownMenuPrimitive.SubTrigger>
 ))
 DropdownMenuSubTrigger.displayName =
-  DropdownMenuItem.SubTrigger.displayName
+  DropdownMenuPrimitive.SubTrigger.displayName
 
 const DropdownMenuSubContent = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.SubContent>,
@@ -73,8 +74,8 @@ const DropdownMenuContent = React.forwardRef<
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName
 
 const DropdownMenuItem = React.forwardRef<
-  React.ElementRef<typeof DropdownMenuItem.Item>,
-  React.ComponentPropsWithoutRef<typeof DropdownMenuItem.Item> & {
+  React.ElementRef<typeof DropdownMenuPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
     inset?: boolean
   }
 >(({ className, inset, ...props }, ref) => (

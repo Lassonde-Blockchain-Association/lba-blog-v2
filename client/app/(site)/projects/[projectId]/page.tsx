@@ -5,9 +5,9 @@ import React, { useEffect, useState } from "react";
 import { trpcClient } from "../../(lib)/trpc";
 import Link from "next/link";
 
-function BlogCard({ title, description, date, imageUrl, authorName, blogId }) {
+function BlogCard({ title, description, date, imageUrl, authorName, slug }) {
   return (
-    <Link href={`/projects/${blogId}`}>
+    <Link href={`/projects/${slug}`}>
       <div className="featured-blog-card dark:bg-gray-900 p-6">
         <img
           src={imageUrl}
@@ -30,8 +30,8 @@ function BlogCard({ title, description, date, imageUrl, authorName, blogId }) {
 
 function ArticleHead({ title, description, imageUrl }) {
   return (
-    <section className="article bg-gray-800 dark:bg-gray-950 text-white mt-28 p-20 dark:mt-0 dark:pt-44 relative">
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-2">
+    <section className="article bg-gray-800 dark:bg-gray-950 text-white mt-28 p-10 md:p-20 dark:mt-0 dark:pt-36 md:dark:pt-44 relative">
+      <div className="md:container mx-auto grid grid-cols-1 md:grid-cols-2 gap-2">
         <div className="md:col-span-3 grid grid-cols-2 md:grid-cols-2 gap-4">
           <div className='flex flex-col justify-center'>
             <div className="div-gap"></div>
@@ -44,7 +44,7 @@ function ArticleHead({ title, description, imageUrl }) {
           <div>
             <img
               src={imageUrl}
-              className="w-full h-[450px] object-fill"
+              className="w-full h-fit md:h-[450px] object-fill"
               alt="Article Header"
             />
           </div>
@@ -64,15 +64,17 @@ function ArticleBody({ content, author, date, featuredBlogs, authorNames }) {
   };
 
   return (
-    <section className="article dark:bg-gray-950 text-black p-10 relative">
-      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <div className="article-header mb-8">
-            <h1 className="font-bold text-xl mb-4 dark:text-white">{date}</h1>
-            <hr className="border-t-2 dark:border-white" />
-          </div>
-          <div className="blog-content dark:text-white">
-            <p>{content}</p>
+    <section className="article dark:bg-gray-950 text-black md:p-10 relative">
+      <div className="md:container md:mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 p-10 md:p-0">
+        <div className="lg:col-span-2 flex flex-col justify-between">
+          <div>
+            <div className="article-header mb-8">
+              <h1 className="font-bold text-xl mb-4 dark:text-white">{date}</h1>
+              <hr className="border-t-2 dark:border-white" />
+            </div>
+            <div className="blog-content dark:text-white">
+              <p>{content}</p>
+            </div>
           </div>
           <div className="flex items-center overflow-x-auto pt-20 pb-10 px-4 -mx-4">
             <span className="font-bold mr-4 text-lg dark:text-white whitespace-nowrap">Categories</span>
@@ -82,9 +84,9 @@ function ArticleBody({ content, author, date, featuredBlogs, authorNames }) {
           </div>
         </div>
         
-        <div className="sidebar1" style={{ width: '330px', margin: '0 auto' }}>
+        <div className="sidebar1 w-fit md:w-[330px]" style={{ margin: '0 auto' }}>
           <div className="font-bold text-xl text-center mb-5 dark:text-white">Author</div>
-          <div className="author mb-5 p-4 bg-gray-300 dark:bg-gray-400 rounded-lg" style={{height: '300px'}}>
+          <div className="author mb-5 p-4 bg-gray-300 dark:bg-gray-400 rounded-lg h-fit">
             <div className="flex justify-center">
               <div className="avatar-placeholder" style={{
                 width: '100px',
@@ -104,8 +106,7 @@ function ArticleBody({ content, author, date, featuredBlogs, authorNames }) {
               </div>
             </div>
             <div className="text-center">
-              <div className="text-lg mb-1 font-bold">{author}</div>
-              <div className="text-sm">Lorem ipsum dolor sit amet, Turpis massa tincidunt dui ut ornare lectus sit. Sagittis aliquam malesuada bibendum arcu vitae elementum curabitur vitae nunc.</div>
+              <div className="text-xl mb-1 font-bold">{author}</div>
             </div>
           </div>
           <h2 className="dark:text-white font text-2xl text-center text-bold mb-3">Featured Blogs</h2>
@@ -118,7 +119,7 @@ function ArticleBody({ content, author, date, featuredBlogs, authorNames }) {
                   date={formatDate(blog.createdAt)}
                   imageUrl={blog.imageUrl}
                   authorName={authorNames[index]} // Pass author name for each featured blog
-                  blogId={blog.id}
+                  slug={blog.slug}
                 />
               ))}
           </div>
@@ -138,7 +139,9 @@ export default function blog() {
   useEffect(() => {
     const fetchMainBlog = async () => {
       try {
-        const mainBlogData = await trpcClient.blog.getById.query({ id: params.projectId });
+        console.log(params.projectId)
+        const mainBlogData = await trpcClient.blog.getBySlug.query({ slug: params.projectId });
+        console.log(mainBlogData)
         setMainBlog(mainBlogData);
 
         const authorId = mainBlogData.authorId;
@@ -155,31 +158,47 @@ export default function blog() {
 
   useEffect(() => {
     const fetchFeaturedBlogs = async () => {
-      try {
-        const allBlogs = await trpcClient.blog.getBlogs.query();
-        // Filter out the current main blog
-        const filteredBlogs = allBlogs.filter(blog => blog.id !== mainBlog.id);
-        const featuredBlogs = filteredBlogs.filter(blog => blog.categories.some(category => mainBlog?.categories.includes(category)));
-        console.log(featuredBlogs)
-        setFeaturedBlogs(featuredBlogs);
-    
-        const authorIdFeatured = featuredBlogs.map(blog => blog.authorId);
-        const authorPromises = authorIdFeatured.map(authorId => trpcClient.author.getAuthorById.query({ id: authorId }));
-        const allAuthors = await Promise.all(authorPromises);
-    
-        const allAuthorsName = featuredBlogs.map(blog => {
-          const author = allAuthors.find(author => author.id === blog.authorId);
-          return author ? `${author.firstName} ${author.lastName}` : "Unknown Author";
-        });
+        try {
+            const allBlogs = await trpcClient.blog.getBlogs.query();
+            const filteredBlogs = allBlogs.filter(blog => blog.id !== mainBlog.id);
 
-        setAllAuthors(allAuthorsName);
-      } catch (error) {
-        console.error("Error fetching featured blogs:", error);
-      }
+            const mainBlogCategories = mainBlog.categories;
+
+            const featuredBlogs = filteredBlogs.filter(blog =>
+                !blog.categories.some(category => mainBlogCategories.includes(category))
+            );
+
+            const shuffledBlogs = shuffleArray(featuredBlogs);
+            const randomFeaturedBlogs = shuffledBlogs.slice(0, 2);
+            
+            setFeaturedBlogs(randomFeaturedBlogs);
+
+            const authorIdFeatured = randomFeaturedBlogs.map(blog => blog.authorId);
+            const authorPromises = authorIdFeatured.map(authorId => trpcClient.author.getAuthorById.query({ id: authorId }));
+            const allAuthors = await Promise.all(authorPromises);
+
+            const allAuthorsName = randomFeaturedBlogs.map(blog => {
+                const author = allAuthors.find(author => author.id === blog.authorId);
+                return author ? `${author.firstName} ${author.lastName}` : "Unknown Author";
+            });
+
+            setAllAuthors(allAuthorsName);
+        } catch (error) {
+            console.error("Error fetching featured blogs:", error);
+        }
     };
 
     fetchFeaturedBlogs();
-  }, [mainBlog]);
+}, [mainBlog]);
+
+// Function to shuffle an array (Fisher-Yates algorithm)
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
 
   function formatDate(timestamp: string): string {
     const date = new Date(timestamp);

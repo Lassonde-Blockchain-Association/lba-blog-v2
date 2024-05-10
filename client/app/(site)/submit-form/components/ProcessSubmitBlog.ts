@@ -131,6 +131,7 @@ async function processSubmitBlog({
       description: submittedBlog.description,
       content: submittedBlog.content,
       imageUrl,
+      slug: formData.slug,
     });
     console.log(result);
   }

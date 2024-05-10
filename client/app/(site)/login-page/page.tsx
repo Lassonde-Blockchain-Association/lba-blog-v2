@@ -14,15 +14,25 @@ const Login: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const result = await trpcClient.auth.signIn.mutate({
-      email: email,
-      password: password,
-    });
+    try {
+      const result = await trpcClient.auth.signIn.mutate({
+        email: email,
+        password: password,
+      });
+      
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("userEmail", data); // Store user email or other info
 
-    console.log(result);
-
-    console.log("Email:", email);
-    console.log("Password:", password);
+    } catch (error) {
+      // Check if the error is due to wrong credentials
+      if (error.message === "Wrong Credentials") {
+        // Display an alert to the user
+        alert("Please verify your email before signing in");
+      } else {
+        // Log other errors to the console
+        console.error(error);
+      }
+    }
   };
 
   return (

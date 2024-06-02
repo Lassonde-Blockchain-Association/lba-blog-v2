@@ -35,18 +35,10 @@ export async function signIn(values: z.infer<typeof signInSchema>) {
     })
     if (error) return { error, code: 401 }
 
-    const token = jwt.sign(
-        { userId: data.user.id },
-        process.env.LOGIN_SECRET as Secret,
-        {
-            expiresIn: "1 Day",
-        },
-    )
-
     //Get session info only
     return {
         code: 200,
-        token,
+        session: data.session.access_token,
     }
 }
 

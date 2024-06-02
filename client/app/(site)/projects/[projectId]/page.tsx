@@ -32,13 +32,13 @@ function ArticleHead({ title, description, imageUrl }) {
   return (
     <section className="article bg-gray-800 dark:bg-gray-950 text-white mt-28 p-10 md:p-20 dark:mt-0 dark:pt-36 md:dark:pt-44 relative">
       <div className="md:container mx-auto grid grid-cols-1 md:grid-cols-2 gap-2">
-        <div className="md:col-span-3 grid grid-cols-2 md:grid-cols-2 gap-4">
+        <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-2 md:gap-12 gap-4">
           <div className='flex flex-col justify-center'>
             <div className="div-gap"></div>
-            <h2 className="font-bold mb-2 lg:text-6xl md:text-4xl">{title}</h2>
+            <h2 className="font-bold md:mb-14 mb-3 lg:text-6xl md:text-4xl text-lg">{title}</h2>
             <ul>
               <div className="div-gap"></div>
-              <h2 className="font mb-2 lg:text-md md:text-sm">{description}</h2>
+              <h2 className="font mb-2 lg:text-md md:text-base text-sm">{description}</h2>
             </ul>
           </div>
           <div>

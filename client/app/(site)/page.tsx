@@ -141,7 +141,7 @@ export default function Home() {
             <img src={imageUrl} className="w-full h-96 mb-8 rounded-xl md:rounded-none object-fill" />
           </div>
     
-          <h1 className="text-4xl font-normal mb-5">{title}</h1>
+          <h1 className="text-4xl font-semibold mb-5">{title}</h1>
     
           <p className="mb-8">{description}</p>
           <div className="flex flex-row justify-between">
@@ -154,9 +154,12 @@ export default function Home() {
             </div>
             <div className="flex gap-1.5 md:gap-x-3 items-center">
               {categories.slice(0, 2).map((category, index) => (
-                <button key={index} className="p-2 md:p-3 rounded-full text-black bg-gray-300 w-fit md:w-32 text-xs md:text-base">
+                <Link 
+                  href={`/${category}`}
+                  key={index} className="text-center p-2 md:p-3 rounded-full text-white bg-purple-500 dark:border-white hover:bg-purple-900 w-fit md:w-32 text-xs md:text-base"
+                >
                   {category}
-                </button>
+                </Link>
               ))}
             </div>
           </div>
@@ -177,7 +180,7 @@ export default function Home() {
               <img src = {imageUrl} className="w-full h-36 md:h-44 rounded-xl md:rounded-none object-fill"/>
             </div>
             <div className="flex flex-col justify-center w-[55%]">
-              <h2 className="text-xl md:text-2xl leading-tight mb-4 md:mb-2">{title}</h2>
+              <h2 className="text-xl md:text-2xl leading-tight mb-4 md:mb-2 font-semibold">{title}</h2>
               <p className="text-xs mb-4 md:mb-3">{description}</p>
               <div className="flex flex-row justify-between">
                 <div className="flex flex-row items-center">
@@ -186,9 +189,13 @@ export default function Home() {
                 </div>
                 <div className="flex md:gap-x-2">
                   {categories.slice(0, 2).map((category, index) => (
-                    <button key={index} className="hidden md:block p-1.5 text-xs text-black rounded-3xl bg-gray-300 w-20">
+                    <Link
+                      href={`/${category}`}
+                      key={index} 
+                      className="text-center hidden md:block p-1.5 text-xs text-white rounded-3xl w-20 bg-purple-500 dark:border-white hover:bg-purple-900"
+                    >
                       {category}
-                    </button>
+                    </Link>
                   ))}
                   <div className="flex items-center">
                     <p className="block md:hidden text-xs">{createdAt}</p>
@@ -281,31 +288,31 @@ export default function Home() {
             <div className="grid gap-y-5 ml-28">
               <div className="flex justify-left">
                 <button
-                  onClick={() => handleCategoryClick("AI")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-12  border-black dark:border-white border-2 hover:bg-purple-900 ">
+                  onClick={() => handleCategoryClick("AI")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-12 hover:bg-purple-900">
                   AI/ML
                 </button>
               </div>
               <div className="flex justify-left">
                 <button
-                  onClick={() => handleCategoryClick("Blockchain")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-15  border-black dark:border-white border-2 hover:bg-purple-900">
+                  onClick={() => handleCategoryClick("Blockchain")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-12 hover:bg-purple-900">
                   Blockchain
                 </button>
               </div>
               <div className="flex justify-left">
                 <button
-                  onClick={() => handleCategoryClick("Metaverse")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-15  border-black dark:border-white border-2 hover:bg-purple-900">
+                  onClick={() => handleCategoryClick("Metaverse")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-12 hover:bg-purple-900">
                   Metaverse
                 </button>
               </div>
               <div className="flex justify-left">
                 <button
-                  onClick={() => handleCategoryClick("Market")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-15  border-black dark:border-white border-2 hover:bg-purple-900">
+                  onClick={() => handleCategoryClick("Market")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-12 hover:bg-purple-900">
                   Market
                 </button>
               </div>
               <div className="flex justify-left">
                 <button
-                  onClick={() => handleCategoryClick("Programming")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-15  border-black dark:border-white border-2 hover:bg-purple-900">
+                  onClick={() => handleCategoryClick("Programming")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-12 hover:bg-purple-900">
                   Programming
                 </button>
               </div>
@@ -330,7 +337,7 @@ export default function Home() {
       <div className="flex justify-center my-14 mt-4 md:my-20">
         <Link
           href={`/${selectedCategory}`}
-          className="p-3 text-center rounded-3xl bg-purple-500 w-32 h-12 border-2 dark:border-white border-black hover:bg-purple-900 "
+          className="p-3 text-center rounded-3xl bg-purple-500 w-32 h-12 hover:bg-purple-900 "
         >
           Read more
         </Link>

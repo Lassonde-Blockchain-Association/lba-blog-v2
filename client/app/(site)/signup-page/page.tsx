@@ -1,5 +1,4 @@
 "use client";
-// ./app/(site)/signup-page/page.tsx
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,42 +8,54 @@ import { trpcClient } from "../(lib)/trpc";
 import { TRPCClientError } from "@trpc/client";
 
 const Signup: React.FC = () => {
-
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
+  // State to control the modal
+  const [modalMessage, setModalMessage] = useState<string>("");
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
-    const result = await trpcClient.auth.signUp.mutate({
-      firstName: firstName,
-      email: email,
-      password: password,
-      lastName: lastName,
-    });
+      const result = await trpcClient.auth.signUp.mutate({
+        firstName: firstName,
+        email: email,
+        password: password,
+        lastName: lastName,
+      });
 
-    console.log("Wohooo:", result);
-    if (result.success) {
-      alert("Welcome!! Hope you are ready to contribute");
+        setModalMessage("Welcome!! Login to Start Contributing");
+        setIsModalVisible(true);
 
-      // Reset Input Fields
-      setFirstName("");
-      setLastName("");
-      setEmail("");
-      setPassword("");
-
-    } else if (result.error) {
-        alert("This user already exists!!");
-    }
-    
+        // Reset Input Fields
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPassword("");
+      
     } catch (err) {
       if (err instanceof TRPCClientError) {
-        const errors = JSON.parse(err.message);
-        const errorMessageString = errors.map(item => `${item.path.join(': ')}: ${item.message}`).join('\n');
-        alert(errorMessageString);
+        console.log(err);
+        // Check if the error message contains "Bad Request"
+        if (err.message.includes("Bad Request")) {
+          setModalMessage("This user already exists!! Try logging in from the login page!!");
+        } else {
+          // This is for error in the Password or the input arguments (First Name & LastName etc)
+          try {
+            const errors = JSON.parse(err.message);
+            const errorMessageString = errors
+              .map((item) => `${item.path.join(": ")}: ${item.message}`)
+              .join("\n");
+            setModalMessage(errorMessageString);
+          } catch (parseError) {
+            setModalMessage(err.message);
+          }
+        }
+        setIsModalVisible(true);
       } else {
         throw err;
       }
@@ -54,7 +65,6 @@ const Signup: React.FC = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 h-fit bg-gray-50 dark:bg-[#020817]">
       {/* Image Background column */}
-
       <div className="hidden md:flex items-center justify-center h-full">
         <div className="w-full h-full relative">
           <Image
@@ -68,31 +78,20 @@ const Signup: React.FC = () => {
       </div>
 
       {/* Signup Page Column */}
-
       <div className="flex items-center justify-center pt-16 pb-12 h-fit">
         <div className="w-full md:w-[85%]">
           <div className="p-10 md:p-8 w-full h-fit">
-            {/* <Link href="https://lassondeblockchain.vercel.app/">
-              <Image alt="logo" src={Logo} className="cursor-pointer h-[50px] w-[50px] mb-3"/>
-            </Link> */}
-
             <h1 className="text-4xl font-bold mb-2.5 text-gray-900 dark:text-white">
               Welcome
             </h1>
-
             <p className="text-gray-500 dark:text-gray-300 text-base font-thin">
               Begin your journey here. Sign in and start crafting your digital
               narrative today.
             </p>
-
             <form action="" className="mt-6" onSubmit={handleSubmit}>
-              {/* Name, Email and Password Boxes Div */}
               <div className="grid grid-rows-4 lg:grid-cols-2 lg:grid-rows-2 gap-x-6 gap-y-5">
                 <div>
-                  <label
-                    htmlFor="name"
-                    className="mb-2 text-gray-900 dark:text-white"
-                  >
+                  <label htmlFor="name" className="mb-2 text-gray-900 dark:text-white">
                     First Name
                   </label>
                   <input
@@ -105,10 +104,7 @@ const Signup: React.FC = () => {
                   />
                 </div>
                 <div className="relative">
-                  <label
-                    htmlFor="confirmPassword"
-                    className="mb-2 text-gray-900 dark:text-white"
-                  >
+                  <label htmlFor="confirmPassword" className="mb-2 text-gray-900 dark:text-white">
                     Last Name
                   </label>
                   <input
@@ -120,10 +116,7 @@ const Signup: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label
-                    htmlFor="email"
-                    className="mb-2 text-gray-900 dark:text-white"
-                  >
+                  <label htmlFor="email" className="mb-2 text-gray-900 dark:text-white">
                     Email
                   </label>
                   <input
@@ -135,12 +128,8 @@ const Signup: React.FC = () => {
                     required
                   />
                 </div>
-
                 <div>
-                  <label
-                    htmlFor="password"
-                    className="mb-2 text-gray-900 dark:text-white"
-                  >
+                  <label htmlFor="password" className="mb-2 text-gray-900 dark:text-white">
                     Password
                   </label>
                   <input
@@ -152,18 +141,12 @@ const Signup: React.FC = () => {
                   />
                 </div>
               </div>
-
-              {/* Submit Button */}
-
               <button
                 type="submit"
                 className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 mt-9 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 Create Account
               </button>
-
-              {/* Signup Text */}
-
               <p className="text-center text-base font-light text-gray-500 dark:text-gray-400 mt-6">
                 Already have an account?{" "}
                 <Link
@@ -173,19 +156,12 @@ const Signup: React.FC = () => {
                   Login here
                 </Link>
               </p>
-
-              {/* Seperation Div */}
-
               <div className="flex items-center justify-center space-x-4 mt-4">
                 <div className="border-t-2 border-gray-200 dark:border-gray-700 flex-grow"></div>
                 <span className="text-gray-400">or</span>
                 <div className="border-t-2 border-gray-200 dark:border-gray-700 flex-grow"></div>
               </div>
-
-              {/* Other Signin Options (Google, Apple) */}
-
               <div className="mt-6">
-                {/* Google */}
                 <a
                   href="#"
                   className="flex items-center justify-center py-3 px-5 mb-5 w-full text-sm text-black dark:text-gray-400 bg-transparent dark:bg-transparent hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm"
@@ -201,20 +177,19 @@ const Signup: React.FC = () => {
                     />
                     <path
                       fill="#ff3d00"
-                      d="m6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691"
+                      d="M6.306 14.691l6.573 4.822C14.861 16.228 19.09 14 24 14c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4c-7.519 0-13.94 4.242-17.694 10.691"
                     />
                     <path
                       fill="#4caf50"
-                      d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44"
+                      d="M24 44c5.138 0 9.794-1.96 13.333-5.167l-6.04-5.167C28.721 35.878 26.442 36.942 24 37c-5.192-.126-9.57-3.51-11.231-8.222l-6.4 4.934C10.155 39.802 16.606 44 24 44"
                     />
                     <path
                       fill="#1976d2"
-                      d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917"
+                      d="M43.611 20.083H42V20H24v8h11.303c-.828 2.341-2.304 4.35-4.218 5.826c.021-.015 6.038 5.167 6.038 5.167C41.334 34.22 44 29.34 44 24c0-1.341-.138-2.65-.389-3.917"
                     />
                   </svg>
-                  Sign in with Google
+                  Sign up with Google
                 </a>
-
                 {/* Apple */}
                 <a
                   href="#"
@@ -270,6 +245,36 @@ const Signup: React.FC = () => {
           </div>
         </div>
       </div>
+
+      import Link from 'next/link';
+
+      {/* Modal */}
+      
+      {isModalVisible && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96">
+            <p className="mt-2 text-gray-600 dark:text-gray-300 font-bold text-xl">{modalMessage}</p>
+            <div className="flex justify-between">
+              {modalMessage === "Welcome!! Login to Start Contributing" && (
+                <Link 
+                  href="/login-page"
+                  className="mt-6 inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  onClick={() => setIsModalVisible(false)}
+                >
+                  Login
+                </Link>
+              )}
+              <button
+                onClick={() => setIsModalVisible(false)}
+                className="mt-6 inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Close
+              </button>
+
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

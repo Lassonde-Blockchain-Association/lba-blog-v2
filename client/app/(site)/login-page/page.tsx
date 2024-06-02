@@ -22,8 +22,8 @@ const Login: React.FC = () => {
         password: password,
       });
 
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("userEmail", result.token); // Store user email or other info
+      console.log(result)
+
     } catch (error) {
       // Check if the error is due to wrong credentials
       if (error.message === "Wrong Credentials") {

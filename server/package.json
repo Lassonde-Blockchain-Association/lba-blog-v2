@@ -20,6 +20,7 @@
     "dependencies": {
         "@prisma/client": "^5.10.2",
         "@supabase/supabase-js": "^2.39.8",
+        "@trpc/client": "^10.45.2",
         "@trpc/server": "^10.45.1",
         "@types/bcrypt": "^5.0.2",
         "@types/cors": "^2.8.17",

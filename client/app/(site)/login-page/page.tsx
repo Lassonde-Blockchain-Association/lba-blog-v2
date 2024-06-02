@@ -13,6 +13,10 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
+  // State to control the modal
+  const [modalMessage, setModalMessage] = useState<string>("");
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -22,19 +26,32 @@ const Login: React.FC = () => {
         password: password,
       });
 
-      console.log(result)
+      localStorage.setItem('email', email);
+      localStorage.setItem('password', password);
+    
+      setModalMessage("Welcome!! Login to Start Contributing");
+      setIsModalVisible(true);
+
+      setEmail("")
+      setPassword("")
 
     } catch (error) {
-      // Check if the error is due to wrong credentials
-      if (error.message === "Wrong Credentials") {
+      console.log(error)
+      // Check if the error is an authentication error
+      if (error && error.message === "AuthApiError: Invalid login credentials") {
         // Display an alert to the user
-        alert("Please verify your email before signing in");
+        setModalMessage("Invalid login credentials. Please try again.");
+        setIsModalVisible(true);
+      } else if (error && error.message === "AuthApiError: Verification required") {
+        // Display an alert to the user
+        setModalMessage("Please verify your email before signing in.");
+        setIsModalVisible(true);
       } else {
         // Log other errors to the console
         console.error(error);
       }
-    }
-  };
+    }       
+  };    
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 h-fit bg-gray-50 dark:bg-[#020817]">
@@ -306,6 +323,32 @@ const Login: React.FC = () => {
               </p> */}
             </form>
           </div>
+          {/* Modal */}
+      
+          {isModalVisible && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96">
+                <p className="mt-2 text-gray-600 dark:text-gray-300 font-bold text-xl">{modalMessage}</p>
+                <div className="flex justify-between">
+                  {modalMessage === "Welcome!! Login to Start Contributing" && (
+                    <Link 
+                      href="/submit-form"
+                      className="mt-6 inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      onClick={() => setIsModalVisible(false)}
+                    >
+                      Contribute to Blogs
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => setIsModalVisible(false)}
+                    className="mt-6 inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

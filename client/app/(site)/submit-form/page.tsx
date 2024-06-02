@@ -124,11 +124,14 @@ function MyForm() {
 
   useEffect(() => {
     const login = async () => {
+
+      const emailAddress = localStorage.getItem('email');
+      const thePassword = localStorage.getItem('password');
+
       const result = await trpcClient.auth.signIn.mutate({
-        email: "theo.thanhlam@gmail.com",
-        password: "@Testpassword1234",
+        email: emailAddress,
+        password: thePassword,
       });
-      console.log(result);
     };
     login();
   }, []);

@@ -15,21 +15,21 @@ export function signIn(): AnyProcedure {
 
         if (signInResult.code == 401) {
             throw new TRPCError({
-                message: signInResult.error,
+                message: signInResult.error as string,
                 code: "UNAUTHORIZED",
             })
         }
 
         if (signInResult.code == 400) {
             throw new TRPCError({
-                message: signInResult.error,
+                message: signInResult.error as string,
                 code: "BAD_REQUEST",
             })
         }
 
         if (signInResult.code == 500) {
             throw new TRPCError({
-                message: signInResult.error,
+                message: signInResult.error as string,
                 code: "INTERNAL_SERVER_ERROR",
             })
         }
@@ -42,21 +42,21 @@ export function signUp(): AnyProcedure {
         console.log(signUpResult)
         if (signUpResult.code == 401) {
             throw new TRPCError({
-                message: signUpResult.error,
+                message: signUpResult.error as string,
                 code: "UNAUTHORIZED",
             })
         }
 
         if (signUpResult.code == 400) {
             throw new TRPCError({
-                message: signUpResult.error,
+                message: signUpResult.error as string,
                 code: "BAD_REQUEST",
             })
         }
 
         if (signUpResult.code == 500) {
             throw new TRPCError({
-                message: signUpResult.error,
+                message: signUpResult.error as string,
                 code: "INTERNAL_SERVER_ERROR",
             })
         }

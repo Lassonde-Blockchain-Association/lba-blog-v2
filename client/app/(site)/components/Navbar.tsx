@@ -26,6 +26,9 @@ const Navbar = () => {
   const [mounted, setMounted] = useState(false);
   const { systemTheme, theme, setTheme } = useTheme();
 
+  const emailAddress = localStorage.getItem('email');
+  console.log("email: ", emailAddress)
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -67,6 +70,18 @@ const Navbar = () => {
               </Link>
             </div>
             <div className="flex items-center justify-between ">
+              <div className="p-2.5">
+                <Link href={emailAddress ? "/submit-form" : "#"}>
+                  <button
+                    className={`bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
+                      emailAddress ? "hover:bg-gray-500" : "opacity-50 cursor-not-allowed"
+                    }`}
+                    disabled={!emailAddress}
+                  >
+                    Create Blog
+                  </button>
+                </Link>
+              </div>
               <div className="p-2.5">
                 <Link href="/login-page">
                   <button className=" bg-gray-700 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">

@@ -72,9 +72,7 @@ function ArticleBody({ content, author, date, featuredBlogs, authorNames }) {
               <h1 className="font-bold text-xl mb-4 dark:text-white">{date}</h1>
               <hr className="border-t-2 dark:border-white" />
             </div>
-            <div className="blog-content dark:text-white">
-              <p>{content}</p>
-            </div>
+            <div className="blog-content dark:text-white" dangerouslySetInnerHTML={{ __html: content }} />
           </div>
           <div className="flex items-center overflow-x-auto pt-20 pb-10 px-4 -mx-4">
             <span className="font-bold mr-4 text-lg dark:text-white whitespace-nowrap">Categories</span>

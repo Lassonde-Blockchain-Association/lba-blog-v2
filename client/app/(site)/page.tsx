@@ -156,7 +156,7 @@ export default function Home() {
               {categories.slice(0, 2).map((category, index) => (
                 <Link 
                   href={`/${category}`}
-                  key={index} className="text-center p-2 md:p-3 rounded-full text-white bg-purple-500 dark:border-white hover:bg-purple-900 w-fit md:w-32 text-xs md:text-base"
+                  key={index} className="text-center p-2 md:p-3 rounded-full text-white bg-purple-500 dark:border-white hover:bg-purple-900 w-fit md:w-36 text-xs md:text-base"
                 >
                   {category}
                 </Link>
@@ -192,7 +192,7 @@ export default function Home() {
                     <Link
                       href={`/${category}`}
                       key={index} 
-                      className="text-center hidden md:block p-1.5 text-xs text-white rounded-3xl w-20 bg-purple-500 dark:border-white hover:bg-purple-900"
+                      className="text-center hidden md:block p-1.5 text-xs text-white rounded-3xl w-24 bg-purple-500 dark:border-white hover:bg-purple-900"
                     >
                       {category}
                     </Link>

@@ -15,21 +15,21 @@ export function signIn(): AnyProcedure {
 
         if (signInResult.code == 401) {
             throw new TRPCError({
-                message: "Wrong Credentials",
+                message: signInResult.error,
                 code: "UNAUTHORIZED",
             })
         }
 
         if (signInResult.code == 400) {
             throw new TRPCError({
-                message: "Invalid Request",
+                message: signInResult.error,
                 code: "BAD_REQUEST",
             })
         }
 
         if (signInResult.code == 500) {
             throw new TRPCError({
-                message: "Internal Server Error",
+                message: signInResult.error,
                 code: "INTERNAL_SERVER_ERROR",
             })
         }
@@ -39,23 +39,24 @@ export function signIn(): AnyProcedure {
 export function signUp(): AnyProcedure {
     return publicProcedure.input(signUpSchema).mutation(async (opts) => {
         const signUpResult = await authFunction.signUp(opts.input)
+        console.log(signUpResult)
         if (signUpResult.code == 401) {
             throw new TRPCError({
-                message: "Wrong Credentials",
+                message: signUpResult.error,
                 code: "UNAUTHORIZED",
             })
         }
 
         if (signUpResult.code == 400) {
             throw new TRPCError({
-                message: "Bad Request",
+                message: signUpResult.error,
                 code: "BAD_REQUEST",
             })
         }
 
         if (signUpResult.code == 500) {
             throw new TRPCError({
-                message: "Internal Server Error",
+                message: signUpResult.error,
                 code: "INTERNAL_SERVER_ERROR",
             })
         }

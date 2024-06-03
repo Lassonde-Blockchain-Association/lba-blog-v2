@@ -31,7 +31,7 @@ function NewsletterPopup({ onClose }: NewsletterPopupProps) {
             <p className="mb-1 text-sm text-black">
               We are currently working on our newsletter subscription feature.
             </p>
-            <p className="mb-3 text-sm text-black">Thankyou for waiting😊</p>
+            <p className="mb-3 text-sm text-black">Thank you for waiting😊</p>
             <form className="flex flex-col items-center">
               {/* <input
                 type="email"
@@ -158,10 +158,7 @@ function Footer() {
                 <Link href="#">Blog</Link>
               </li>
               <li className="mb-2">
-                <Link href="#">Main Website</Link>
-              </li>
-              <li>
-                <Link href="#">UI/UX Design</Link>
+                <Link href="https://lassondeblockchain.vercel.app/">Main Website</Link>
               </li>
             </ul>
           </div>
@@ -169,16 +166,16 @@ function Footer() {
             <h2 className="font-bold mb-3.5 text-xl">Pages</h2>
             <ul>
               <li className="mb-2">
-                <Link href="#">NFT</Link>
+                <Link href="/AI">AI/ML</Link>
               </li>
               <li className="mb-2">
-                <Link href="#">Team</Link>
+                <Link href="/Blockchain">Blockchain</Link>
               </li>
               <li className="mb-2">
-                <Link href="#">Blog</Link>
+                <Link href="/Programming">Programming</Link>
               </li>
               <li>
-                <Link href="#">Demo</Link>
+                <Link href="/Metaverse">Metaverse</Link>
               </li>
             </ul>
           </div>

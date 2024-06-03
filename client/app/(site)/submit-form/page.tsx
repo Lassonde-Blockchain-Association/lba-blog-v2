@@ -124,9 +124,8 @@ function MyForm() {
 
   useEffect(() => {
     const login = async () => {
-
-      const emailAddress = localStorage.getItem('email');
-      const thePassword = localStorage.getItem('password');
+      const emailAddress = localStorage.getItem("email");
+      const thePassword = localStorage.getItem("password");
 
       const result = await trpcClient.auth.signIn.mutate({
         email: emailAddress,
@@ -172,7 +171,7 @@ function MyForm() {
       {shouldMsgShow &&
         !(
           categoryError ||
-          dateError ||
+          // dateError ||
           titleError ||
           descError ||
           imageError ||
@@ -236,17 +235,7 @@ function MyForm() {
           </div>
 
           {/* Image Upload */}
-          <div className="mt-4 mb-4 ">
-            <input
-              type="text"
-              id="slug"
-              name="slug"
-              placeholder="Slug"
-              value={formData.slug}
-              readOnly
-              className="border w-full rounded-xl pl-[7px] py-2 text-white-700 leading-tight bg-slate-200 dark:bg-slate-800 border-black dark:border-opacity-100 border-opacity-50 focus:outline-none focus:shadow-outline"
-            />
-          </div>
+
           {/* <label className={`block mt-3 text-sm font-medium text-white `}>
             Image
           </label> */}

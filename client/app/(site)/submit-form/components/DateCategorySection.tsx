@@ -31,7 +31,7 @@ const DateCategorySection = ({
 }: DateCategorySectionProps) => {
   return (
     <div className="flex flex-row justify-between space-x-56 h-[3.5rem]">
-      <div className="mt-4 flex-grow">
+      {/* <div className="mt-4 flex-grow">
         <input
           type="text"
           onFocus={(e) => (e.target.type = "date")}
@@ -45,10 +45,10 @@ const DateCategorySection = ({
           onFocusCapture={() => setDateError(false)}
         />
         {/* </div> */}
-        {dateError && (
+      {/* {dateError && (
           <div className="text-red-600">The Date Field is Empty!</div>
         )}
-      </div>
+      </div> */}
 
       {/* Category */}
       <div className="mt-4 flex-grow rounded-xl z-50">

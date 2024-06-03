@@ -38,7 +38,7 @@ export async function signIn(values: z.infer<typeof signInSchema>) {
     //Get session info only
     return {
         code: 200,
-        session: data.session.access_token,
+        token: data.session.access_token,
     }
 }
 
@@ -94,4 +94,21 @@ export async function signOut() {
         }
     }
     return await supabase.auth.signOut()
+}
+
+export async function verifyToken(jwt: string) {
+    const {
+        data: { user },
+    } = await supabase.auth.getUser(jwt)
+
+    if (!user) {
+        return {
+            code: 401,
+            validToken: false,
+        }
+    }
+    return {
+        code: 200,
+        validToken: true,
+    }
 }

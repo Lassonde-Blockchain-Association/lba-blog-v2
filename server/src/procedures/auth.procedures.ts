@@ -3,6 +3,7 @@ import { authProcedure, publicProcedure } from "../trpc"
 
 import { signInSchema, signUpSchema } from "../schema/auth.schema"
 import * as authFunction from "../lib/data/auth.data"
+import { z } from "zod"
 
 /**
  * A signin procedure that validates data and signin user
@@ -66,5 +67,12 @@ export function signUp(): AnyProcedure {
 export function signOut() {
     return authProcedure.mutation(async () => {
         return await authFunction.signOut()
+    })
+}
+
+export function verifyToken() {
+    return authProcedure.mutation(async (opts) => {
+        const token = opts.ctx.access_token as string
+        return await authFunction.verifyToken(token)
     })
 }

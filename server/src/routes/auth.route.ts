@@ -6,4 +6,5 @@ export const authRouter: AnyRouter = router({
     signIn: authProcedures.signIn(),
     signUp: authProcedures.signUp(),
     signOut: authProcedures.signOut(),
+    verifyToken: authProcedures.verifyToken(),
 })

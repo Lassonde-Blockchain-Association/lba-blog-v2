@@ -138,7 +138,7 @@ export default function Home() {
       <div className="flex flex-col">
         <Link href={`/projects/${slug}`} className="cursor-pointer">
           <div>
-            <img src={imageUrl} className="w-full h-96 mb-8 rounded-xl md:rounded-none object-fill" />
+            <img src={imageUrl} className="w-full h-96 mb-8 rounded-xl object-fill" />
           </div>
     
           <h1 className="text-4xl font-semibold mb-5">{title}</h1>
@@ -177,7 +177,7 @@ export default function Home() {
       <Link href={`/projects/${slug}`}>
         <div className="flex gap-6">
             <div className="w-[45%]">
-              <img src = {imageUrl} className="w-full h-36 md:h-44 rounded-xl md:rounded-none object-fill"/>
+              <img src = {imageUrl} className="w-full h-36 md:h-44 rounded-xl object-fill"/>
             </div>
             <div className="flex flex-col justify-center w-[55%]">
               <h2 className="text-xl md:text-2xl leading-tight mb-4 md:mb-2 font-semibold">{title}</h2>
@@ -216,7 +216,7 @@ export default function Home() {
     return (
       <Link href={`/projects/${slug}`}>
         <div className="flex gap-5 h-full">
-          <img src = {imageUrl} className="flex-col w-[27%] h-48 object-fill"/>
+          <img src = {imageUrl} className="flex-col w-[27%] h-48 object-fill rounded-xl"/>
             <div className="flex justify-between flex-col w-[50%] l-[50%]">
               <h4 className="text-2m text-normal mb-2">{category}</h4>
               <p className="text-2xl mb-3">{title}</p>
@@ -243,8 +243,8 @@ export default function Home() {
     <>
       <div>
         <div className="mt-32 md:mt-28 my-6 md:mx-16">
-          <h2 className="font-medium text-5xl text-center text-gray-800 dark:text-blue-50 mb-4 md:mb-9">
-            LBA - Blog
+          <h2 className="font-bold md:text-7xl text-5xl text-center text-gray-800 dark:text-blue-50 mb-4 md:mb-9">
+            LBA - Blogs.
           </h2>
 
           <div className="grid grid-rows-1 md:grid-cols-7 md:grid-rows-none md:gap-x-14 md:p-0">
@@ -288,31 +288,31 @@ export default function Home() {
             <div className="grid gap-y-5 ml-28">
               <div className="flex justify-left">
                 <button
-                  onClick={() => handleCategoryClick("AI")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-12 hover:bg-purple-900">
+                  onClick={() => handleCategoryClick("AI")} className="p-3 text-center rounded-3xl text-white bg-purple-500 w-40 h-12 hover:bg-purple-900">
                   AI/ML
                 </button>
               </div>
               <div className="flex justify-left">
                 <button
-                  onClick={() => handleCategoryClick("Blockchain")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-12 hover:bg-purple-900">
+                  onClick={() => handleCategoryClick("Blockchain")} className="p-3 text-center rounded-3xl text-white bg-purple-500 w-40 h-12 hover:bg-purple-900">
                   Blockchain
                 </button>
               </div>
               <div className="flex justify-left">
                 <button
-                  onClick={() => handleCategoryClick("Metaverse")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-12 hover:bg-purple-900">
+                  onClick={() => handleCategoryClick("Metaverse")} className="p-3 text-center rounded-3xl text-white bg-purple-500 w-40 h-12 hover:bg-purple-900">
                   Metaverse
                 </button>
               </div>
               <div className="flex justify-left">
                 <button
-                  onClick={() => handleCategoryClick("Market")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-12 hover:bg-purple-900">
+                  onClick={() => handleCategoryClick("Market")} className="p-3 text-center rounded-3xl text-white bg-purple-500 w-40 h-12 hover:bg-purple-900">
                   Market
                 </button>
               </div>
               <div className="flex justify-left">
                 <button
-                  onClick={() => handleCategoryClick("Programming")} className="p-3 text-center rounded-3xl bg-purple-500 w-40 h-12 hover:bg-purple-900">
+                  onClick={() => handleCategoryClick("Programming")} className="p-3 text-center rounded-3xl text-white bg-purple-500 w-40 h-12 hover:bg-purple-900">
                   Programming
                 </button>
               </div>
@@ -337,7 +337,7 @@ export default function Home() {
       <div className="flex justify-center my-14 mt-4 md:my-20">
         <Link
           href={`/${selectedCategory}`}
-          className="p-3 text-center rounded-3xl bg-purple-500 w-32 h-12 hover:bg-purple-900 "
+          className="p-3 text-center rounded-3xl text-white bg-purple-500 w-32 h-12 hover:bg-purple-900 "
         >
           Read more
         </Link>

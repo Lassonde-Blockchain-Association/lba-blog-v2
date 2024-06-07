@@ -22,7 +22,7 @@ export const authProcedure = t.procedure.use(async function isAuthed(opts) {
     return opts.next({
         ctx: {
             access_token: opts.ctx.session?.access_token,
-            userId: opts.ctx.userId
+            userId: opts.ctx.userId,
         },
     })
 })

@@ -13,7 +13,7 @@ function BlogCard({ title, description, date, imageUrl, authorName, slug }) {
         className="w-full h-44 object-fill rounded-xl"
         alt="Blog"
       />
-      <h3 className="text-xl font-bold mt-4 mb-2 text-black">{title}</h3>
+      <h3 className="text-xl font-bold mt-4 mb-2 text-black dark:text-white">{title}</h3>
       <p className="text-black mb-4 font-medium text-sm dark:text-white">{description}</p>
       <div className="flex justify-between items-center">
         <div className="flex flex-row items-center">

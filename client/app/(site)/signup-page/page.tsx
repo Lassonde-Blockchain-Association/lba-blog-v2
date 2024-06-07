@@ -246,8 +246,6 @@ const Signup: React.FC = () => {
         </div>
       </div>
 
-      import Link from 'next/link';
-
       {/* Modal */}
       
       {isModalVisible && (

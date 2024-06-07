@@ -5,15 +5,14 @@ import Pagination from "../components/Pagination";
 import { Link } from "react-router-dom";
 import { BrowserRouter } from 'react-router-dom';
 import { trpcClient } from "../(lib)/trpc";
-import { useParams } from 'next/navigation'
-
-
+import { useParams } from 'next/navigation';
 
 interface SmallBlog {
   id: string;
   title: string;
   createdAt: string;
   description: string;
+  slug: string;
   imageUrl?: string;
 }
 
@@ -98,12 +97,12 @@ export default function CategoryPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent dark:to-[hsl(222.2,84%,4.9%)] to-white"></div>
       </div>
 
-      <div className="container h-full w-full pt-20">
+      <div className="px-6 md:px-0 md:container h-full w-full pt-20">
         <div className="my-32 w-8/12">
           <h1 className="text-6xl font-semibold">{defaultCategoryTitle}</h1>
           <p className="m-2 mt-5 w-full sm:w-8/12">{defaultCategoryDescription}</p> 
         </div>
-        <div className="grid grid-cols-1 gap-4 gap-y-16 justify-center items-center sm:grid-cols-2 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 gap-y-16 justify-center md:grid-cols-2 lg:grid-cols-3">
           {currentBlogs.map((blog, index) => (
            <BrowserRouter key={blog.id}>
               <Blog key={index} blog={blog} index={index} authorNames={allAuthorName[index]}/>
@@ -145,8 +144,8 @@ function Blog({ blog, index, authorNames }: BlogProps) {
   };
 
   return (
-    <div className={`flex ${blogClassName}`}>
-     <Link to={`/projects/${blog.id}`} className="cursor-pointer">
+    <div className={`md:flex ${blogClassName}`}>
+     <Link to={`/projects/${blog.slug}`} className="cursor-pointer">
         <SmallBlogCard
           imgSrc={blog.imageUrl}
           title={blog.title}

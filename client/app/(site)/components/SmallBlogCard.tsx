@@ -25,8 +25,8 @@ export default function SmallBlogCard({
   description = defaultContent,
 }: SmallBlogProps) {
   return (
-    <div className="flex flex-col w-96 my-2">
-      <img src={imgSrc} className="aspect-video" />
+    <div className="flex flex-col w-fit md:w-96 my-2">
+      <img src={imgSrc} className="aspect-video rounded-xl" />
       {/* Replace with IMG later */}
       <h1 className="mt-4 text-lg font-semibold">{title}</h1>
       <h2 className="mt-2 text-sm line-clamp-4">{description}</h2>

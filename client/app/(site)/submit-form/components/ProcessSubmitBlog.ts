@@ -3,7 +3,6 @@ import { Dispatch, SetStateAction } from "react";
 import z from "zod";
 import { trpcClient } from "../../(lib)/trpc";
 import { BlogSchema as blogSchemaBackend } from "../../../../../server/src/schema/blog.schema";
-import { createBlog } from "../../../../../server/src/services/blog.services";
 import cleanseSubmittedBlog from "./CleanseSubmittedBlog";
 
 interface processSubmitBlogProps {

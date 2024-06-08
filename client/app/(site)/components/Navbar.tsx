@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import marker from "../components/lib/marker.gif";
 import Logo from "../../../public/logo.png";
+import { trpcClient } from "../(lib)/trpc";
 import {
   Sheet,
   SheetContent,
@@ -13,7 +14,6 @@ import {
   SheetTrigger,
 } from "./Sheets";
 import { useTheme } from "next-themes";
-import { useState, useEffect } from "react";
 import { MdDarkMode } from "react-icons/md";
 import { BsFillSunFill } from "react-icons/bs";
 import SelectedCategorySingleton from "../components/globalSelectedCategory";
@@ -25,11 +25,16 @@ const Navbar = () => {
 
   const [mounted, setMounted] = useState(false);
   const { systemTheme, theme, setTheme } = useTheme();
-
-  const emailAddress = localStorage.getItem('email');
-  console.log("email: ", emailAddress)
+  const [tokenValid, setTokenValid] = useState(false);
 
   useEffect(() => {
+    const validateToken = async () => {
+      const tokenValidation = await trpcClient.auth.verifyToken.mutate(document.cookie);
+      
+      setTokenValid(tokenValidation.code === 200 && tokenValidation.validToken);
+    };
+
+    validateToken();
     setMounted(true);
   }, []);
 
@@ -43,14 +48,6 @@ const Navbar = () => {
           <div className="container flex justify-between m-auto items-center">
             <div className="flex items-center gap-4 z-50 left-">
               <Link
-                //   href="/"
-                //   onClick={() => {
-                //     resetCategory();
-                //   }}
-                //   className="text-2xl lg:mx-12 md:mx-8 mx-4 font-bold bg-gradient-to-r justify-end from-orange-400 via-red-500 to-purple-600 bg-clip-text text-transparent"
-                // >
-                //   LBA - Blog
-                // </Link>
                 href="https://lassondeblockchain.vercel.app/"
                 className=""
               >
@@ -63,7 +60,6 @@ const Navbar = () => {
               <span className="text-slate-700 dark:text-white text-4xl">/</span>
               <Link
                 href="\"
-                // href="https://lba-blog.vercel.app/"
                 className="dark:text-white text-slate-700 cursor-pointer text-xl hover:text-orange-300 dark:hover:text-orange-300  transform duration-150"
               >
                 LBA - Blog
@@ -71,12 +67,12 @@ const Navbar = () => {
             </div>
             <div className="flex items-center justify-between ">
               <div className="p-2.5">
-                <Link href={emailAddress ? "/submit-form" : "#"}>
+                <Link href={tokenValid ? "/submit-form" : "#"}>
                   <button
                     className={`bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
-                      emailAddress ? "hover:bg-gray-500" : "opacity-50 cursor-not-allowed"
+                      tokenValid ? "hover:bg-gray-500" : "opacity-50 cursor-not-allowed"
                     }`}
-                    disabled={!emailAddress}
+                    disabled={!tokenValid}
                   >
                     Create Blog
                   </button>
@@ -91,21 +87,14 @@ const Navbar = () => {
               </div>
 
               <div className="cursor-pointer flex justify-end lg:mx-12 md:mx-8 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
-                {/* <div className="right-10 border dark:hover:bg-slate-50 duration-100 dark:bg-slate-800 bg-grap-100 rounded transition"> */}
                 {currentTheme === "dark" ? (
-                  // {/* light button */}
-
                   <button
                     onClick={() => setTheme("light")}
-                    // onClick={() =>
-                    //   theme == "dark" ? setTheme("light") : setTheme("dark")
-                    // }
                     className="leading-9 text-x1 rounded-full m-1 text-orange-400"
                   >
                     <BsFillSunFill className="w-6 h-6" target="_blank" />
                   </button>
                 ) : (
-                  // {/* dark button */}
                   <button
                     onClick={() => setTheme("dark")}
                     className=" leading-9 text-x1 rounded-full m-1 text-purple-600"
@@ -115,8 +104,6 @@ const Navbar = () => {
                 )}
               </div>
             </div>
-
-            {/* Hidden Side Bar */}
 
             <div className="top-0 right-0 p-0 md:hidden">
               <Sheet>

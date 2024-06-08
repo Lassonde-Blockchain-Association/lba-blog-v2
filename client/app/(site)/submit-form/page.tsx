@@ -123,16 +123,15 @@ function MyForm() {
   const [fileReader, setFileReader] = useState<FileReader>();
 
   useEffect(() => {
-    const login = async () => {
-      const emailAddress = localStorage.getItem("email");
-      const thePassword = localStorage.getItem("password");
+    const validateToken = async () => {
+      const tokenValidation = await trpcClient.auth.verifyToken.mutate(document.cookie);
 
-      const result = await trpcClient.auth.signIn.mutate({
-        email: emailAddress,
-        password: thePassword,
-      });
+      if (tokenValidation.code === 401) {
+        alert('Login token is expired. User needs to login to continue')
+      }
+      
     };
-    login();
+    validateToken();
   }, []);
 
   useEffect(() => {

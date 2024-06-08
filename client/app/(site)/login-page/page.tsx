@@ -25,13 +25,8 @@ const Login: React.FC = () => {
         email: email,
         password: password,
       });
-      
-      console.log(result.session)
 
-      document.cookie = `token=${result.session}; path=/ secure=true`;
-
-      localStorage.setItem('email', email);
-      localStorage.setItem('password', password);
+      document.cookie = `token=${result.token}; path=/ `;
     
       setModalMessage("Welcome!! Login to Start Contributing");
       setIsModalVisible(true);

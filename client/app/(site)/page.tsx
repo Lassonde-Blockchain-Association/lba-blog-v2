@@ -5,14 +5,32 @@ import React from "react";
 import Link from "next/link";
 import { trpcClient } from "./(lib)/trpc";
 
+interface BlogProps {
+  imageUrl: string;
+  title: string;
+  description: string;
+  authorId: string;
+  createdAt: string;
+  categories: string[];
+  slug: string;
+}
+
+interface CategoryProps {
+  imageUrl: string;
+  category: string;
+  title: string;
+  authorId: string;
+  slug: string;
+}
+
 export default function Home() {
-  const [allTheBlogs, setallBlogs] = useState([]);
-  const [latestBlogs, setLatestBlogs] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [usedBlogIds, setUsedBlogIds] = useState([]);
-  const [filteredBlogs, setFilteredBlogs] = useState([]);
+
+  const [allTheBlogs, setAllBlogs] = useState<BlogProps[]>([]);
+  const [latestBlogs, setLatestBlogs] = useState<BlogProps[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [usedBlogIds, setUsedBlogIds] = useState<string[]>([]);
+  const [filteredBlogs, setFilteredBlogs] = useState<BlogProps[]>([]);
   const [allAuthors, setAllAuthors] = useState([]);
-  const [selectedBlogId, setSelectedBlogId] = useState(null);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -20,10 +38,10 @@ export default function Home() {
         const allBlogs = await trpcClient.blog.getBlogs.query();
         console.log("All Blogs:", allBlogs);
 
-        setallBlogs(allBlogs)
+        setAllBlogs(allBlogs)
 
         const fetchAuthor = async () => {
-          const authorId = allBlogs.map(blog => blog.authorId);
+          const authorId : string[] = allBlogs.map((blog: BlogProps) => blog.authorId);
         
           const authorPromises = authorId.map(authorId => {
             return trpcClient.author.getAuthorById.query({ id: authorId });
@@ -38,10 +56,10 @@ export default function Home() {
         fetchAuthor();
   
         const sortedBlogs = allBlogs
-          .sort((a, b) => {
-            return new Date(b.createdAt) - new Date(a.createdAt);
-          })
-          .slice(0, 4); 
+        .sort((a, b) => {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        })
+        .slice(0, 4);
 
           setLatestBlogs(sortedBlogs);
           console.log(sortedBlogs)
@@ -129,8 +147,7 @@ export default function Home() {
     return `${day}-${month}-${year}`;
   };
 
-  const CardMain = ({ imageUrl, title, description, authorId, createdAt, categories, slug }) => {
-
+  const CardMain: React.FC<BlogProps> = ({ imageUrl, title, description, authorId, createdAt, categories, slug }) => {
     const author = allAuthors.find(author => author.id === authorId);
     const authorName = author ? `${author.firstName} ${author.lastName}` : "Unknown Author";
   
@@ -140,13 +157,15 @@ export default function Home() {
           <div>
             <img src={imageUrl} className="w-full h-96 mb-8 rounded-xl object-fill" />
           </div>
-    
+  
           <h1 className="text-4xl font-semibold mb-5">{title}</h1>
-    
+  
           <p className="mb-8">{description}</p>
           <div className="flex flex-row justify-between">
             <div className="flex flex-row items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="h-6 w-6 rounded-full mr-2 dark:fill-white"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="h-6 w-6 rounded-full mr-2 dark:fill-white">
+                <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/>
+              </svg>
               <p className="md:ml-1 text-xs md:text-sm w-fit">{authorName}</p>
             </div>
             <div className="flex flex-row items-center">
@@ -167,12 +186,11 @@ export default function Home() {
       </div>
     );
   };
-
-  const CardSide = ({ imageUrl ,title, description, authorId, createdAt, categories, slug }) => {
-
-  const author = allAuthors.find(author => author.id === authorId);
-  const authorName = author ? `${author.firstName} ${author.lastName}` : "Unknown Author";
-
+  
+  const CardSide: React.FC<BlogProps> = ({ imageUrl, title, description, authorId, createdAt, categories, slug }) => {
+    const author = allAuthors.find(author => author.id === authorId);
+    const authorName = author ? `${author.firstName} ${author.lastName}` : "Unknown Author";
+  
     return (
       <Link href={`/projects/${slug}`}>
         <div className="flex gap-6">
@@ -184,7 +202,9 @@ export default function Home() {
               <p className="text-xs mb-4 md:mb-3">{description}</p>
               <div className="flex flex-row justify-between">
                 <div className="flex flex-row items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="h-5 w-5 rounded-full mr-2 dark:fill-white"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="h-5 w-5 rounded-full mr-2 dark:fill-white">
+                    <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/>
+                  </svg>
                   <p className="text-xs">{authorName}</p>
                 </div>
                 <div className="flex md:gap-x-2">
@@ -207,12 +227,11 @@ export default function Home() {
       </Link>
     );
   };
-
-  const Categories = ({ imageUrl, category, title, authorId, slug })=> {
-
+  
+  const Categories: React.FC<CategoryProps> = ({ imageUrl, category, title, authorId, slug }) => {
     const author = allAuthors.find(author => author.id === authorId);
     const authorName = author ? `${author.firstName} ${author.lastName}` : "Unknown Author";
-
+  
     return (
       <Link href={`/projects/${slug}`}>
         <div className="flex gap-5 h-full">
@@ -222,7 +241,9 @@ export default function Home() {
               <p className="text-2xl mb-3">{title}</p>
                 <div className="flex flex-row justify-between">
                   <div className="flex flex-row items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="h-5 w-5 rounded-full mr-2 dark:fill-white"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="h-5 w-5 rounded-full mr-2 dark:fill-white">
+                      <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/>
+                    </svg>
                     <p className="text-xs">{authorName}</p>
                   </div>
                 <div className="grid grid-cols-2 gap-x-2 items-center">
@@ -232,7 +253,7 @@ export default function Home() {
         </div>
       </Link>
     )
-  }
+  }  
 
  // Render null if latestBlogs is empty or undefined
  if (!latestBlogs || latestBlogs.length === 0) {

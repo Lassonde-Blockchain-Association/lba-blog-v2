@@ -15,12 +15,22 @@ interface BlogProps {
   slug: string;
 }
 
+interface BlogId {
+  id: string;
+}
+
 interface CategoryProps {
   imageUrl: string;
   category: string;
   title: string;
   authorId: string;
   slug: string;
+}
+
+interface Author {
+  id: string;
+  firstName: string;
+  lastName: string;
 }
 
 export default function Home() {
@@ -30,7 +40,7 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [usedBlogIds, setUsedBlogIds] = useState<string[]>([]);
   const [filteredBlogs, setFilteredBlogs] = useState<BlogProps[]>([]);
-  const [allAuthors, setAllAuthors] = useState([]);
+  const [allAuthors, setAllAuthors] = useState<Author[]>([]);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -64,7 +74,7 @@ export default function Home() {
           setLatestBlogs(sortedBlogs);
           console.log(sortedBlogs)
   
-        const usedIds = sortedBlogs.map(blog => blog.id);
+          const usedIds = sortedBlogs.map((blog: BlogId) => blog.id);
         setUsedBlogIds(usedIds);
   
       } catch (error) {
@@ -75,49 +85,19 @@ export default function Home() {
   }, []); // Empty dependency array ensures this effect runs only once, on mount
 
   useEffect(() => {
-    // Set filtered blogs based on selected category
-    if (selectedCategory === "") {
-      // If no category selected, show default blogs
-      const defaultBlogs = getDefaultBlogs();
-      setFilteredBlogs(defaultBlogs);
-    } else {
-      // If category selected, show blogs for that category
-      const blogsForCategory = latestBlogs
-        .filter(blog => blog.categories.includes(selectedCategory))
-        .filter(blog => !usedBlogIds.includes(blog.id))
-        .slice(0, 2);
-      setFilteredBlogs(blogsForCategory);
-    }
+    
+    // If category selected, show blogs for that category
+    const blogsForCategory = latestBlogs
+      .filter(blog => blog.categories.includes(selectedCategory))
+      .filter(blog => !usedBlogIds.includes(blog.id))
+      .slice(0, 2);
+    setFilteredBlogs(blogsForCategory);
   }, [selectedCategory, latestBlogs, usedBlogIds]);
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
   };
 
-  // Function to get default blogs for each category
-  const getDefaultBlogs = () => {
-    const defaultBlogs = {
-      "AI": [],
-      "Blockchain": [],
-      "Metaverse": []
-    };
-  
-    latestBlogs.forEach(blog => {
-      blog.categories.forEach(category => {
-        if (defaultBlogs[category] && defaultBlogs[category].length < 3 && !usedBlogIds.includes(blog.id)) {
-          defaultBlogs[category].push(blog);
-        }
-      });
-    });
-  
-    // Ensure only three blogs are selected per category
-    for (const category in defaultBlogs) {
-      defaultBlogs[category] = defaultBlogs[category].slice(0, 3);
-    }
-  
-    return defaultBlogs[selectedCategory] || [];
-  };
-  
   // Function to filter blogs by category, case-insensitive
   const filterBlogsByCategory = (category, maxBlogs = 3) => {
     const lowercaseCategory = category.toLowerCase();
@@ -128,15 +108,8 @@ export default function Home() {
 };
   
   useEffect(() => {
-    if (selectedCategory === "") {
-      // If no category selected, show default blogs
-      const defaultBlogs = getDefaultBlogs();
-      setFilteredBlogs(defaultBlogs);
-    } else {
-      // If category selected, show blogs for that category (case-insensitive)
       const blogsForCategory = filterBlogsByCategory(selectedCategory);
       setFilteredBlogs(blogsForCategory);
-    }
   }, [selectedCategory, latestBlogs, usedBlogIds]);
 
   const formatDate = (timestamp: string) => {
